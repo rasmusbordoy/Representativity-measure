@@ -1,0 +1,60 @@
+---
+title: "Representativity measure - working paper"
+author: "Rasmus Bordoy, Thomas Gerds, Nina Føns Johnsen, Sidsel Marie Bernt Jørgensen"
+date: "2023-09-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+<!-- <details> -->
+<!-- <summary> -->
+<!-- <font size= "3"> **Description** </font> -->
+<!-- </summary> -->
+<!-- <br> -->
+
+In regards to studying participation in a survey by The Danish Heart Foundation called Life With A Heart disease, then the following subject has become of interest.
+
+\newline
+
+The subject/theme is to find some measure that speaks of the representativity amongst the participants in the survey.
+The notion of representativity is somewhat arbitrary, since it does not have a clear statistical meaning. In short, the interest is to investigate to what extent the proportions of groups within a dataset (respondants only) is equal or perhaps homogeneous.
+
+\newline
+
+Some representativity measures will be presented in examples, first for categorical groups, and then later an attempt to incorporate continuous variables into the measure will be made.
+
+\newline
+
+**Example 1** - Contribution of disjoint groups falling below the overall response proportion
+\newline
+
+In this example the intention is to measure how much the response probability within two groups differs from the overall response probability. The difference in response probabilities is however only measured whenever the response probability falls below the overall response probability, since some may argue that an overrepresentation within a group doesn't cause problems.
+
+\newline
+
+If $\hat{p}_{\text{overall}}$ is the overall response probability, then let $g_1$ and $g_2$ be two disjoint groups within the data, say male and female, then let $\hat{p}_{g_1}$ and $\hat{p}_{g_2}$ be their response probabilities.
+
+Allowing the contribution of the groups only being present whenever the response probabilities fall below $\hat{p}_{\text{overall}}$, then the following measure measures to which extent the response probabilities fall below the overall response probability.
+
+\[
+\frac{\hat{p}_{g_1} 1_{  \{ \hat{p}_{g_1} <\hat{p}_{\text{overall}} \} }+
+\hat{p}_{\text{overall}} 1_{ \{\hat{p}_{g_1} \geq \hat{p}_{\text{overall}} \} 
+}
+\,\,\,\,+
+\,\,\,\,
+\hat{p}_{g_2} 1_{ \{ 
+\hat{p}_{g_2} <\hat{p}_{\text{overall}} \}
+}+\hat{p}_{\text{overall}} 
+1_{ \{ \hat{p}_{g_2} \geq \hat{p}_{\text{overall}} \}} }
+{2 \cdot \hat{p}_{\text{overall}}}
+\]
+
+
+
+
+<!-- </details> -->
+
