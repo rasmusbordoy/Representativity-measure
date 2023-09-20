@@ -54,7 +54,8 @@ Allowing the contribution of the groups only being present whenever the response
 \]
 
 
-
+**Example 2** - Comparing several proportions using the chi square test
+\newline
 
 <!-- </details> -->
 
