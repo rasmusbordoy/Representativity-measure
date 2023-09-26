@@ -2,16 +2,12 @@
 title: "Representativity measure - working paper"
 author: "Rasmus Bordoy, Thomas Gerds, Nina Føns Johnsen, Sidsel Marie Bernt Jørgensen"
 date: "September 2023"
-output:   
-  html_document:
-    theme: sandstone
-    toc: true
-    code_folding: hide
+output: pdf_document
+code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(data.table)
 ```
 
 
@@ -27,7 +23,7 @@ In regards to studying participation in a survey by The Danish Heart Foundation 
 </summary>
 <br>
 The subject/theme is to find some measure that speaks of the representativity amongst the participants in the survey.
-The notion of representativity is somewhat arbitrary, since it does not have a clear statistical meaning. In short, the interest is to investigate to what extent the proportions of groups within a dataset (respondants only) are equal.
+The notion of representativity is somewhat arbitrary, since it does not have a clear statistical meaning. In short, the interest is to investigate to what extent the proportions of groups within a dataset (respondants only) is equal or perhaps homogeneous.
 
 \newline
 
@@ -58,7 +54,7 @@ The difference in response rate is measured whenever the response rate falls bel
 Let ${p}_{\text{overall}} = \frac{\sum_{i=1}^{N} \pi_i}{N}$ be the overall response rate for a response indicator $\pi_i \in \{0,1\}$. Then let $g_1$ and $g_2$ be two disjoint groups within the data, say male and female, and let ${p}_{g_1}$ and ${p}_{g_2}$ be their response rates. The categorical response rate is defined as 
 $${p}_{g_1} =  \frac{\sum_{i=1}^{N_{g_1}} \pi_i }{N_{g_1}},$$ where $N_{g_1}$ is the number of records within group $1$.
 
-Allowing the contribution from response rates within groups only being present whenever the response rates fall below ${p}_{\text{overall}}$, then the following measure measures to which extent the response rates fall below the overall response rate
+Allowing the contribution from response rates within groups only being present whenever the response rates fall below ${p}_{\text{overall}}$, then the following measure measures to which extent the response rates fall below the overall response rate.
 
 
 \begin{align}
@@ -104,7 +100,7 @@ The presented representativity measure will represent the balance in the respons
 
 Consider the following figure
 
-```{r}
+```{r,echo=FALSE}
 obs_age <- seq(from=40,to=81,by=1)
 pot_age <- seq(from=35,to=120,by=1)
 overall_rate <- 0.55
@@ -129,7 +125,7 @@ In the figure above it is seen that the response rate for a given age on the x-a
 
 The area below the line with age specific rates whilst being below the overall rate will be the contribution of response rate from the age covariate in general, and the area between the overall rate and age specific rate whenever the latter is below the overall rate will be the contribution to "loss of response". The following figure illustrates this.
 
-```{r}
+```{r,echo=FALSE}
 obs_age <- seq(from=40,to=81,by=1)
 pot_age <- seq(from=35,to=120,by=1)
 overall_rate <- 0.55
@@ -166,8 +162,7 @@ The areas A and B are found by integrating the overall response rate over the ob
 $$
 A+B = \int_{\text{age}} p_{\text{overall}} \, ds =  p_{\text{overall}} \left( \max \text{age} - \min \text{age} \right)
 $$
-Let the age-specific response rate be given as a function of age $p_{ \text{ age} }(s)$. The area A can be found as
-
+Let the age-specific response rate be given as a function of age $p_{\text{ age}}( s) $. The area A can be found as
 \begin{align}
 A & = \int_{\text{age}} p_{\text{ age}}( s) 1_{ \{  p_{\text{ age}}( s) < p_{\text{overall}} \} } +  p_{\text{overall}} 1_{ \{  p_{\text{ age}} \geq p_{\text{overall}} \} } \, ds \\
 &= \int_{\text{age}} p_{\text{overall}}+1_{ \{  p_{\text{ age}}( s) < p_{\text{overall}} \} }\left(p_{\text{ age}}( s) - p_{\text{overall}}  \right)  \, ds \\
@@ -194,10 +189,7 @@ Sometimes it is more convenient to take integer numbers instead of continuous nu
 
 R & = 1 + \frac{\sum_{i = \min \text{age}}^{\max \text{age}} 1_{ \{  p_{\text{ age}}( i) < p_{\text{overall}} \} } \left( p_{\text{ age}}( i) - p_{\text{overall}}  \right)}{p_{\text{overall}} \left( \max \text{age} - \min \text{age} \right)},
 \end{align}
-
-where 
-$$p_{ \text{ age} }(i) = \frac{ \sum_{j = 1}^{N} 1_{ \{ \text{age}_j = i \} } \pi_j}{ \sum_{j = 1}^{N} 1_{ \{ \text{age}_j = i \} }},$$ 
-and $i$ is a given age value represented as an integer. The discrete version also applies to covariates that have clearly defined orders 
+where $p_{\text{ age}}( i) = \frac{ \sum_{j = \min \text{age}}^{\max \text{age}} 1_{ j = i}}{N}$ and $i$ is a given age value represented as an integer. The discrete varion also applies to covariates that have clearly defined orders 
 
 $\textbf{NB:}$ Confusion can arise with the presented measure since the age specific response rate is not symmetric around the overall rate. There is a different number of persons for each age which leads to different weights to the overall response rate, and when considering the representativity measure there is no control for a lack of persons within a group, only if there is a lack of persons within a group in regards of responding vs not responding.
 
@@ -215,106 +207,3 @@ $\textbf{NB:}$ Confusion can arise with the presented measure since the age spec
 </details>
 </details>
 
-<details>
-<summary>
-<font size= "3"> **Simulation study** </font>
-</summary>
-<br>
-A synthetic dataset with $1000$ records and covariates on sex (male, female), area (rural, suburban and urban) and age is generated.
-```{r}
-n <- 1000
-df <- data.frame(matrix(0,nrow=n,ncol=4))
-setDT(df)
-#Assign half of the records as male and female
-df[,2] <- ifelse(rbinom(n,1,0.5) == 1, "Male","Female")
-
-#Assign 20 percent of the records as living in the rural area, 40 percent in suburban and 40 in urban
-df[,3] <- ifelse(rbinom(n,1,0.2)==1,"Rural",ifelse(rbinom(n,1,0.5),"Suburban","Urban"))
-
-#Assign ages randomly from a uniform distribution
-df[,4] <- round(runif(n,min=35,max=82),0)
-
-colnames(df) <- c("Response","Sex","Area","Age")
-
-p1 <- (unlist(df[,.N,by=Sex][,2]))/n
-names(p1) <- unlist(df[,.N,by=Sex][,1])
-p2 <- (unlist(df[,.N,by=Area][,2]))/n
-names(p2) <- unlist(df[,.N,by=Area][,1])
-par(mfrow=c(1,3))
-barplot(p1,main="Distribution of sex",ylab="%")
-barplot(p2,main="Distribution of area",ylab="%")
-hist(unlist(df[,"Age"]),main="Distribution of age",prob=TRUE,xlab="Age")
-```
-
-At the given stage all the responses are $0$. Attributing responses according to a Binomial distribution where the response probabilities are different within interactions of area and sex, then the respresentativity measure can be found.
-
-The following response probabilities are attributed:
-\begin{array}{|l|l|c|c|c|c|ccc}
-
-\hline \text{Sex} & \text{Area} & p \\
-\hline \text{Male} & \text{Rural} & 0.2 \\
-\text{Male} & \text{Suburban} & 0.5 \\
-\text{Male} & \text{Urban} & 0.4 \\
-
-\text{Female} & \text{Rural} & 0.4 \\
-\text{Female} & \text{Suburban} & 0.7 \\
-\text{Female} & \text{Urban} & 0.6 \\
-\hline
-\end{array}
-
-No response probabilities are attributed across age and thus the response distribution is assumed to be random.
-```{r}
-options(width = 300)
-df[Sex=="Male" & Area=="Rural"][,1] <- rbinom(dim(df[Sex=="Male" & Area=="Rural"][,1])[1],1,0.2)
-df[Sex=="Male" & Area=="Suburban"][,1] <- rbinom(dim(df[Sex=="Male" & Area=="Suburban"][,1])[1],1,0.5)
-df[Sex=="Male" & Area=="Urban"][,1] <- rbinom(dim(df[Sex=="Male" & Area=="Urban"][,1])[1],1,0.4)
-df[Sex=="Female" & Area=="Rural"][,1] <- rbinom(dim(df[Sex=="Female" & Area=="Rural"][,1])[1],1,0.4)
-df[Sex=="Female" & Area=="Suburban"][,1] <- rbinom(dim(df[Sex=="Female" & Area=="Suburban"][,1])[1],1,0.7)
-df[Sex=="Female" & Area=="Urban"][,1] <- rbinom(dim(df[Sex=="Female" & Area=="Urban"][,1])[1],1,0.6)
-
-p1 <- (unlist(df[,mean(Response),by=Sex][,2]))
-names(p1) <- unlist(df[,mean(Response),by=Sex][,1])
-
-p2 <- (unlist(df[,mean(Response),by=Area][,2]))
-names(p2) <- unlist(df[,mean(Response),by=Area][,1])
-
-p3 <- (unlist(df[,mean(Response),by=Age][,2]))
-names(p3) <- unlist(df[,mean(Response),by=Age][,1])
-
-par(mfrow=c(1,3))
-barplot(p1,main="Response pct by sex",ylab="%")
-barplot(p2,main="Response pct by area",ylab="%")
-hist(unlist(df[,"Age"]),main="Distribution of age",prob=TRUE,xlab="Age")
-```
-
-The representetivity measures are calculated as
-
-```{r}
-seq_rep <- 1+sum(apply(df[,mean(Response),by=Sex],1,function(x){ifelse(as.numeric(x[2])<df[,mean(Response)],as.numeric(x[2])-df[,mean(Response)],0)}))/df[,mean(Response)]
-area_rep <- 1+sum(apply(df[,mean(Response),by=Area],1,function(x){ifelse(as.numeric(x[2])<df[,mean(Response)],as.numeric(x[2])-df[,mean(Response)],0)}))/df[,mean(Response)]
-p_age <- Vectorize(function(a){
-sum(df[Age==a,Response])/nrow(df[Age==a])
-})
-age_rep <- 1+sum(ifelse(p_age(sort(unlist(unique(df[,"Age"]))))<df[,mean(Response)],p_age(sort(unlist(unique(df[,"Age"]))))-df[,mean(Response)],0))/(df[,mean(Response)]*(max(unlist(unique(df[,"Age"])))-min(unlist(unique(df[,"Age"])))))
-
-
-sex_rep <- 1+sum(apply(df[,mean(Response),by=Sex],1,function(x){ifelse(as.numeric(x[2])<df[,mean(Response)],as.numeric(x[2])-df[,mean(Response)],0)}))/df[,mean(Response)]
-area_rep <- 1+sum(apply(df[,mean(Response),by=Area],1,function(x){ifelse(as.numeric(x[2])<df[,mean(Response)],as.numeric(x[2])-df[,mean(Response)],0)}))/df[,mean(Response)]
-
-p_age <- Vectorize(function(a){
-sum(df[Age==a,Response])/nrow(df[Age==a])
-})
-age_rep <- 1+sum(ifelse(p_age(sort(unlist(unique(df[,"Age"]))))<df[,mean(Response)],p_age(sort(unlist(unique(df[,"Age"]))))-df[,mean(Response)],0))/(df[,mean(Response)]*(max(unlist(unique(df[,"Age"])))-min(unlist(unique(df[,"Age"])))))
-
-
-print(list("Representativity Sex"=round(sex_rep,4),
-     "Representativity Area" = round(area_rep,4),
-     "Representativity Age"=round(age_rep,4)))
-```
-
-The average representativity is
-```{r}
-mean(c(sex_rep,area_rep,age_rep))
-```
-
-</details>
