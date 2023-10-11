@@ -1,0 +1,240 @@
+---
+title: "Representativity measure - working paper 2"
+author: "Rasmus Bordoy, Thomas Gerds, Nina Føns Johnsen, Sidsel Marie Bernt Jørgensen"
+date: "October 2023"
+output:   
+  html_document:
+    theme: sandstone
+    toc: true
+    code_folding: hide
+    header-includes: \usepackage{matchcal}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(data.table)
+```
+
+
+
+
+In regards to studying participation in a survey by The Danish Heart Foundation called Life With A Heart disease, then the following subject has become of interest.
+
+
+The subject/theme is to find some measure that speaks of the representativity amongst the participants in the survey.
+The notion of representativity is somewhat arbitrary, since it does not have a clear statistical meaning. In short, the interest is to investigate to what extent the proportions of groups within a dataset (respondants only) are equal.
+
+
+
+
+
+<font size= "3"> **Example based on R-indicators** </font>
+
+The paper "Estimation of an indicator of the representativeness of survey response" Shlomo, Skinner and Schouten (2012) is the backbone for results in the paper "Theoretical Properties of Partial Indicators for Representative Response" Shlomo and Schouten (2013). These papers, and more, are written by a group collaboration named the RISQ project (Representativity Indicators for Survey Quality).
+
+
+$\textbf{Definition of R-indicators}$
+
+Let $U$ denote units in a population, and let $s$ denote units in a sample, where $U$ has $N$ records and $s$ has $n$ records. Let $\pi_i$ be the response indicator being $1$ if item $i$ has responded to a survey when chosen for the sample. The response propensity is the conditional expectation of $\pi_i$ given the auxiliary variable(s) $x_i$ of the vector/matrix $X$ 
+
+$$
+p_i := p(x_i) = E(\pi_i | x_i).
+$$
+We assume that the values $x_i$ are known for all units in the sample, both respondents and non-respondents, and potentially also for the whole population.
+
+The definition of the R-indicator for the population is 
+$$
+R_p = 1- 2 S_p,
+$$
+where $S_p^2$ is estimated by
+$$
+\hat{S}_p^2 = \frac{1}{N-1}\sum_{i \in s} \omega_i \, ( \hat{p}(x_i) - \hat{\bar{p}}_U)^2,
+$$
+with $\omega_i$ being inclusion weights in terms of $s$ with respect to $U$, and $\hat{\bar{p}}_U = \frac{1}{N}\sum_{i \in s} \omega_i \, \hat{p} (x_i)$. In a random sample all the weights are equal.
+
+"R-indicators provide a single value between zero and one that measures the
+closeness to representative response. Representativity is defined in terms of the response
+propensities of different sample units given their values on a specified set of auxiliary
+variables. Response is said to be representative if all the response propensities in the
+sample are equal (and none are equal to zero)" Shlomo and Schouten (2013)
+
+$\textbf{Bias adjustment of R-indicator}$
+
+Shlomo and Schouten (2013) and Shlomo, Skinner and Schouten (2012) propose bias adjustments of the R-indicator due to the sample size dependent bias. It is stated that when sample size decreases, then the bias increases.
+
+The following measures are of relevance
+
+\begin{align}
+\bar{p}_U & = \frac{\sum_{i \in U} p_i}{N}, \\
+\hat{\bar{p}}_U & = \frac{\sum_{i \in s} \omega_i \hat{p}_i}{N}, \\
+\hat{p}_i & = g^{-1}(x_i^T \hat{\beta}) \,\, \, \text{where } g \text{ is the link function,} \\
+\bar{p}_s & = \frac{\sum_{i \in s} \omega_i p_i}{N} .
+\end{align}
+
+A decomposition of $\hat{S}_p$ is presented. First $\hat{p}_i - \hat{\bar{p}_U}$ is rewritten by adding zero
+
+
+\begin{align}
+\hat{p}_i - \hat{\bar{p}_U} &= (\hat{p}_i - p_i) + (p_i-\bar{p}_U) + (\bar{p}_U - \bar{p}_s)+(\bar{p}_s - \hat{\bar{p}}_U).
+\end{align}
+
+A distinction is made between taking expectation to the sampling mechanism and response mechanism. When speaking of $p_i$ (not $\hat{p}_i$) the expectation is with respect to the response mechanism, i.e. $p_i = E_r(\pi_i | x_i)$. When taking expectations with respect to the sampling mechanism (the design) it is denoted by $E_s(\cdot)$.
+
+We will use that
+
+\begin{align}
+E_r(\hat{p}_i)  &\approx p_i, \\
+E_r(\hat{\bar{p}}_U) & \approx \bar{p}_s,
+\end{align}
+
+in order to obtain
+
+
+\begin{align}
+
+E\left[ \left( \hat{p}_i - \hat{\bar{p}}_U
+\right)^2
+\right] &= 
+E\left[ \left((\hat{p}_i - p_i) + (p_i-\bar{p}_U) + (\bar{p}_U - \bar{p}_s)+(\bar{p}_s - \hat{\bar{p}}_U)\right)^2
+\right] \\
+&=
+E\left[ (\hat{p}_i - p_i)^2 + (p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2+(\bar{p}_s - \hat{\bar{p}}_U)^2\right]
++ 2E(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i - \bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
+& \qquad \qquad \qquad + \underset{=0}{\underbrace{2 E(\hat{p}_i - p_i)(p_i - \bar{p}_U) + 2 E(\hat{p}_i-p_i)(\bar{p}_U - \bar{p}_s) + 2 E(p_i - \bar{p}_U)(\bar{p}_s - \hat{\bar{p}}_U) + 2 E(\bar{p}_U - \bar{p}_s)(\bar{p}_s-\hat{\bar{p}}_U)}} \\
+&= E\left[ (\hat{p}_i - p_i)^2\right] +E\left[ (\bar{p}_s - \hat{\bar{p}}_U)^2\right] + (p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2 \\
+& \qquad \qquad + 2E(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i - \bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
+&= 
+Var_r(\hat{p}_i) + Var(\hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2\\
+&  \qquad \qquad  - 2 Cov(\hat{p}_i,\hat{\bar{p}}_U)-2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) \\
+
+&= Var_r(\hat{p}_i - \hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2 - 2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) .
+\end{align}
+
+
+This leads to the following approximation for 
+$E_r(\hat{S}_p^2)$:
+
+\begin{align}
+E_r(\hat{S}_p^2) & \approx \frac{1}{N-1} \sum_{i \in s} \omega_i \left\{
+Var_r(\hat{p}_i - \hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2 - 2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) 
+\right\} \\
+&=
+\frac{1}{N-1} \sum_{i \in s} \omega_i 
+Var_r(\hat{p}_i - \hat{\bar{p}}_U) + \frac{1}{N-1} \sum_{i \in s} \omega_i  (p_i-\bar{p}_U)^2 \\
+& \qquad \qquad
++\frac{N_{s}}{N-1}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)  \underset{\approx N\bar{p}_s - N_s \bar{p}_U}{\underbrace{\frac{\sum_{i \in s} \omega_i(p_i - \bar{p}_U)}{N-1}}}
+\\
+&
+
+\approx 
+\frac{1}{N-1}\left\{ 
+\sum_{i \in s} \omega_i 
+Var_r(\hat{p}_i - \hat{\bar{p}}_U) + \sum_{i \in s} \omega_i  (p_i-\bar{p}_U)^2
+
+ +N_{s}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)(N\bar{p}_s - N_s \bar{p}_U)
+\right\},
+
+\end{align}
+
+
+where $N_s = \sum_{i \in s} \omega_i$.
+
+Taking expectation with respect to the sampling design  gives
+
+\begin{align}
+E_s E_r(\hat{S}_p^2) = S^2_P + A_1 +A_2,
+\end{align}
+
+where 
+
+\begin{align}
+A_1 &= E_s \left[
+\frac{1}{N-1} \sum_{i \in s} \omega_i 
+Var_r(\hat{p}_i - \hat{\bar{p}}_U)
+\right], \\
+A_2 &=
+E_s \left[ \frac{1}{N-1} \left\{
+N_{s}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)(N\bar{p}_s - N_s \bar{p}_U)
+\right\}
+
+\right].
+\end{align}
+
+$A_1$ is asymptotically equivalent to
+$$
+\lambda_1 = E_s \left[N^{-1}
+\sum_{i \in s} \omega_i Var_r(\hat{p}_i)
+\right].
+$$
+
+The term $A_2$ can be rewritten. Note
+$$
+N_{s}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)(N\bar{p}_s - N_s \bar{p}_U) = (N_{s}-2N)(\bar{p}_U - \bar{p}_s)^2 -2(N-N_s)  (\bar{p}_s - \bar{p}_U)\bar{p}_U.
+$$
+
+
+Asymptotically $A_2$ is equivalent to, when ignoring terms of lower order,
+$$
+\begin{align}
+\lambda_2 & \approx - E_s \{ (\bar{p}_s - \bar{p}_U)^2\} + 2 \bar{p}_U E_s \{ (N^{-1} N_s -1)(\bar{p}_s - \bar{p}_U) \} \\
+&= - Var_s ( \bar{p}_s) + 2 \bar{p}_U N^{-1} Cov_s (N_s , \bar{p}_s).
+\end{align}
+$$
+
+This leads to the bias-adjusted R-indicator
+
+$$
+\tilde{S}_p^2 = \hat{S}^2_p - \hat{\lambda}_1-\hat{\lambda}_2,
+$$
+
+where $\hat{\lambda}_1$ and $\hat{\lambda}_2$ are estimators of $\lambda_1$ and $\lambda_2$ respectively. $\hat{\lambda_1}$ is
+$$
+\hat{\lambda_1} = \frac{1}{N} \sum_{i \in s} \omega_i \hat{V}_r(\hat{p}_i),
+$$
+where $\hat{V}_r(\hat{p}_i)$ is an estimator of ${Var}_r(\hat{p}_i)$. In the case of constant weights $\omega_i = N/n$, then $\hat{\lambda_1}$ is, according to Shlomo, Skinner and Schouten (2012)
+$$
+\hat{\lambda_1} = \frac{1}{n} \sum_{i \in s} \nabla h(\bf{x}_i^T \hat{\beta})^2 \bf{x}_i^T\left[ \sum_{ j \in s}
+\nabla h(\bf{x}_j^T \hat{\beta})\bf{x}_j\bf{x}_j^T\right]^{-1}\bf{x}_i^T,
+$$
+
+where $\nabla h(\bf{x}_i^T \hat{\beta}) = \exp(\bf{x}_i^T\hat{\beta})/(1+\exp(\bf{x}_i^T\hat{\beta}))^2$, and $h$ being the link (inverse ??) function.
+
+In terms of constant weights, the term $N_s$ is constant, then according to Shlomo, Skinner and Schouten (2012) $\hat{\lambda}_2$ becomes
+$$
+\hat{\lambda}_2 = -(n^{-1} - N^{-1})S_p^2.
+$$
+All in all this leads to the bias adjusted estimator of $S_p^2$ becoming
+$$
+\tilde{S}^2_p = \hat{S}^2_p - \hat{\lambda}_1- \hat{\lambda}_2 = (1+n^{-1} - N^{-1})\hat{S}_p^2 -  \frac{1}{n} \sum_{i \in s} \nabla h(\bf{x}_i^T \hat{\beta})^2 \bf{x}_i^T\left[ \sum_{ j \in s}
+\nabla h(\bf{x}_j^T \hat{\beta})\bf{x}_j\bf{x}_j^T\right]^{-1}\bf{x}_i^T.
+$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
