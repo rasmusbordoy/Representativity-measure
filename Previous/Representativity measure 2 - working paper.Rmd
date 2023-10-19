@@ -92,20 +92,20 @@ in order to obtain
 
 \begin{align}
 
-E\left[ \left( \hat{p}_i - \hat{\bar{p}}_U
+E_r\left[ \left( \hat{p}_i - \hat{\bar{p}}_U
 \right)^2
 \right] &= 
-E\left[ \left((\hat{p}_i - p_i) + (p_i-\bar{p}_U) + (\bar{p}_U - \bar{p}_s)+(\bar{p}_s - \hat{\bar{p}}_U)\right)^2
+E_r\left[ \left((\hat{p}_i - p_i) + (p_i-\bar{p}_U) + (\bar{p}_U - \bar{p}_s)+(\bar{p}_s - \hat{\bar{p}}_U)\right)^2
 \right] \\
 &=
-E\left[ (\hat{p}_i - p_i)^2 + (p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2+(\bar{p}_s - \hat{\bar{p}}_U)^2\right]
-+ 2E(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i - \bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
-& \qquad \qquad \qquad + \underset{=0}{\underbrace{2 E(\hat{p}_i - p_i)(p_i - \bar{p}_U) + 2 E(\hat{p}_i-p_i)(\bar{p}_U - \bar{p}_s) + 2 E(p_i - \bar{p}_U)(\bar{p}_s - \hat{\bar{p}}_U) + 2 E(\bar{p}_U - \bar{p}_s)(\bar{p}_s-\hat{\bar{p}}_U)}} \\
-&= E\left[ (\hat{p}_i - p_i)^2\right] +E\left[ (\bar{p}_s - \hat{\bar{p}}_U)^2\right] + (p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2 \\
-& \qquad \qquad + 2E(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i - \bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
+E_r\left[ (\hat{p}_i - p_i)^2 + (p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2+(\bar{p}_s - \hat{\bar{p}}_U)^2\right]
++ 2E_r(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i - \bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
+& \qquad \qquad \qquad + \underset{=0}{\underbrace{2 E_r(\hat{p}_i - p_i)(p_i - \bar{p}_U) + 2 E_r(\hat{p}_i-p_i)(\bar{p}_U - \bar{p}_s) + 2 E_r(p_i - \bar{p}_U)(\bar{p}_s - \hat{\bar{p}}_U) + 2 E_r(\bar{p}_U - \bar{p}_s)(\bar{p}_s-\hat{\bar{p}}_U)}} \\
+&= E_r\left[ (\hat{p}_i - p_i)^2\right] +E_r\left[ (\bar{p}_s - \hat{\bar{p}}_U)^2\right] + (p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2 \\
+& \qquad \qquad + 2E_r(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i - \bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
 &= 
-Var_r(\hat{p}_i) + Var(\hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2\\
-&  \qquad \qquad  - 2 Cov(\hat{p}_i,\hat{\bar{p}}_U)-2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) \\
+Var_r(\hat{p}_i) + Var_r(\hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2\\
+&  \qquad \qquad  - 2 Cov_r(\hat{p}_i,\hat{\bar{p}}_U)-2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) \\
 
 &= Var_r(\hat{p}_i - \hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2 - 2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) .
 \end{align}

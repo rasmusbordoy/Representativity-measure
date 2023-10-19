@@ -7,6 +7,7 @@ output:
     theme: sandstone
     toc: true
     code_folding: hide
+    header-includes: \usepackage{matchcal}
 ---
 
 ```{r setup, include=FALSE}
@@ -36,11 +37,29 @@ Some representativity measures will be presented through examples, first for cat
 \newline
 </details>
 
+
+
+
+
+
+
+
+
+
 <details>
 <summary>
-<font size= "3"> **Examples** </font>
+<font size= "4"> **Examples** </font>
 </summary>
 <br>
+
+
+<details>
+<summary>
+<font size= "3"> **Examples based on overall response probability** </font>
+</summary>
+<br>
+
+
 <details>
 <summary>
 <font size= "3"> **Example 1** - *Contribution of disjoint groups falling below the overall response rate* </font>
@@ -204,16 +223,156 @@ $\textbf{NB:}$ Confusion can arise with the presented measure since the age spec
 </details>
 
 
+</details>
+
+
+
 <details>
 <summary>
-<font size= "2"> **Empty** - Comparing several proportions using the chi square test </font>
+<font size= "3"> **Examples based on total variation** </font>
 </summary>
 <br>
 
-\newline
+The total variation distance between two probability measures $P$ and $Q$ defined on the space $(\Omega,\mathcal{F})$is defined as
+$$
+\underset{A \in \mathcal{F} }{\text{sup}}|P(A) - Q(A)|.
+$$
+The use of interest in this document is to look at the total variation in terms of conditional probabilities.
+
+
+Considering factor covariates as a binary version leads to the following. Having an example where covariates are sex={male,female} and Area={rural, suburban, urban}, then these can be considered with the following mathematics. Having only one row in data, then the non-intercept model matrix consists of
+$$
+\{
+\text{M} \in \{0,1\},
+\text{F} \in \{0,1\},
+\text{R} \in \{0,1\},
+\text{S} \in \{0,1\},
+\text{U} \in \{0,1\}
+\},
+$$
+where M,F,R,S,U are shorts for male, female, rural, suburban and urban.
+
+
+The response probability/propensity is then
+$$
+P(\pi = 1 | M=m,F=f,R=r,S=s,U=u) := p(m,f,r,s,u).
+$$
+Indeed this is too general, since M and F are disjoint as well as R, S and U are disjoint. This means that only one of the disjoint variables can be 1. Setting two disjoint variables as 1, or setting all to 0 leads to a probability of zero.
+
+
+We define the difference operator for the probability measure $p(a,b)$ as
+
+$$
+\Delta(A) := p(1,B)- p(0,B),
+$$
+where $B$ is varying freely,
+
+and
+\[
+\begin{align}
+\Delta(A,B) & := \Delta(B) \left[ p( 1,B)- p(0,B) \right] \\
+&= \left[ p( 1,1) - p(0,1) \right] - \left[ p( 1,0) - p(0,0) \right].
+\end{align}
+\]
+
+The multivariate total variation version of the difference operator above is inspired from Hardy and Vitali variation, and it is defined as the absolute value of the difference operator.
+
+$$
+|\Delta(A,B)|
+$$
+
+Considering the example with dimension $d=5$ leads to some redundancy, since males and females can have the same $\{0,1\}$ level at the same time, but it just means that there is addition of zero.
+
+The difference operator becomes long and tedious
+
+
+\begin{align}
+\Delta_p(M,F,R,S,U) & = \Delta_p(M,F,R,S) \,\left( p(M,F,R,S,1) - p(M,F,R,S,0) \right) \\
+& =\Delta_p(M,F,R) \, \left( \{ p(M,F,R,1,1) - p(M,F,R,1,0) \} - \{ p(M,F,R,0,1) - p(M,F,R,0,0)\} \right)\\
+& =\Delta_p(M,F) \, [ \,\,  \{ p(M,F,1,1,1) - p(M,F,1,1,0) - p(M,F,1,0,1) + p(M,F,1,0,0)\}
+\\
+& \qquad \qquad \qquad -\{ p(M,F,0,1,1) - p(M,F,0,1,0) - p(M,F,0,0,1) + p(M,F,0,0,0)\}  \,\, ] \\
+& =\Delta_p(M) \, [ \,\,  \{ p(M,1,1,1,1) - p(M,1,1,1,0) - p(M,1,1,0,1) + p(M,1,1,0,0)
+\\
+& \qquad \qquad \qquad - p(M,1,0,1,1) + p(M,1,0,1,0) + p(M,1,0,0,1) - p(M,1,0,0,0)\}  \\
+
+ & \qquad \qquad - \{ p(M,0,1,1,1) - p(M,0,1,1,0) - p(M,0,1,0,1) + p(M,0,1,0,0)
+\\
+& \qquad \qquad \qquad - p(M,0,0,1,1) + p(M,0,0,1,0) + p(M,0,0,0,1) - p(M,0,0,0,0)\}  \,\,
+\,\, ] 
+\\
+&= [ \,\,  \{ p(1,1,1,1,1) - p(1,1,1,1,0) - p(1,1,1,0,1) + p(1,1,1,0,0)
+\\
+& \qquad \qquad \qquad - p(1,1,0,1,1) + p(1,1,0,1,0) + p(1,1,0,0,1) - p(1,1,0,0,0)  \\
+
+ & \qquad \qquad \qquad - p(1,0,1,1,1) + p(1,0,1,1,0) + p(1,0,1,0,1) - p(1,0,1,0,0)
+\\
+& \qquad \qquad \qquad + p(1,0,0,1,1) - p(1,0,0,1,0) - p(1,0,0,0,1) + p(1,0,0,0,0)\}  \\
+&
+\qquad  - \{ p(0,1,1,1,1) - p(0,1,1,1,0) - p(0,1,1,0,1) + p(0,1,1,0,0)
+\\
+& \qquad \qquad \qquad - p(0,1,0,1,1) + p(0,1,0,1,0) + p(0,1,0,0,1) - p(0,1,0,0,0)  \\
+
+ & \qquad \qquad \qquad - p(0,0,1,1,1) + p(0,0,1,1,0) + p(0,0,1,0,1) - p(0,0,1,0,0)
+\\
+& \qquad \qquad \qquad + p(0,0,0,1,1) - p(0,0,0,1,0) - p(0,0,0,0,1) + p(0,0,0,0,0)\} 
+\,\,
+\,\, ].
+\end{align}
+
+
+Note that $p(1,1,R,S,R) = p(0,0,R,S,R) = p(M,F,1,1,0) = p(M,F,1,0,1) = p(M,F,0,1,1) = p(M,F,1,1,1) = p(M,F,0,0,0) = 0$. This simplifies the above to 
+
+
+$$
+- p(1,0,1,0,0)
+   - p(1,0,0,1,0) - p(1,0,0,0,1)
+ - p(0,1,1,0,0)
+  - p(0,1,0,1,0) - p(0,1,0,0,1).
+$$
+
+In the case of two groups with two levels the difference operator becomes
+
+$$
+p(1,0,0,1)+p(1,0,1,0)-p(0,1,0,1)+p(0,1,1,0).
+$$
+
+It is somehow challenging to cope with this size.
 
 </details>
+
+
 </details>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <details>
 <summary>

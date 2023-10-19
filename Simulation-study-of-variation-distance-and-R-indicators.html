@@ -11,8 +11,9 @@
 
 <meta name="author" content="Rasmus Bordoy, Thomas Gerds, Nina Føns Johnsen, Sidsel Marie Bernt Jørgensen" />
 
+<meta name="date" content="2023-10-17" />
 
-<title>Representativity measure - working paper 2</title>
+<title>Simulation study of the variation distance and R-indicators</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -449,31 +450,109 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Representativity measure - working paper
-2</h1>
+<h1 class="title toc-ignore">Simulation study of the variation distance
+and R-indicators</h1>
 <h4 class="author">Rasmus Bordoy, Thomas Gerds, Nina Føns Johnsen,
 Sidsel Marie Bernt Jørgensen</h4>
-<h4 class="date">October 2023</h4>
+<h4 class="date">2023-10-17</h4>
 
 </div>
 
 
-<p>In regards to studying participation in a survey by The Danish Heart
-Foundation called Life With A Heart disease, then the following subject
-has become of interest.</p>
-<p>The subject/theme is to find some measure that speaks of the
-representativity amongst the participants in the survey. The notion of
-representativity is somewhat arbitrary, since it does not have a clear
-statistical meaning. In short, the interest is to investigate to what
-extent the proportions of groups within a dataset (respondants only) are
-equal.</p>
-<p><font size="3"> <strong>Example based on R-indicators</strong>
-</font></p>
-<p>The paper “Estimation of an indicator of the representativeness of
-survey response” Shlomo, Skinner and Schouten (2012) is the backbone for
-results in the paper “Theoretical Properties of Partial Indicators for
-Representative Response” Shlomo and Schouten (2013). These papers, and
-more, are written by a group collaboration named the RISQ project
+<details>
+<summary>
+<font size="4"> <strong>Theoretical section</strong> </font>
+</summary>
+<p><br></p>
+<details>
+<summary>
+<font size="3"> <strong>Section 1 - Defining Variation Distance for
+Survey Response</strong> </font>
+</summary>
+<p><br> This section has of now only applicability to discrete factor
+covariates with no specific ordering. It will be of interest to extend
+the theory to include numerical covariates.</p>
+<p>Consider a dataset with <span class="math inline">\(K\)</span>
+covariates and <span class="math inline">\(N\)</span> rows, where each
+row is denoted <span class="math inline">\(X_i, i = 1, \ldots,
+K\)</span>. It is possible to fit a response model (f.x. logistic
+regression) where record <span class="math inline">\(i\)</span> has a
+response if <span class="math inline">\(\pi_i = 1\)</span>, and <span class="math inline">\(\pi_i = 0\)</span> in the case of non-response.
+Fitting an MLE model leads to an expression of the type <span class="math display">\[
+{P}_{\hat{\theta}}(\pi = 1 | X = \bf{x}),
+\]</span> where <span class="math inline">\(\bf{x}\)</span> is a vector
+collection of covariates. In the case of only one covariate <span class="math inline">\(\bf{x}\)</span> is just a single level (not number
+since it is a factor covariate).</p>
+<p>For covariate <span class="math inline">\(k \in \{1,\ldots
+K\}\)</span> the number of groups/levels for the given covariate is
+denoted as <span class="math inline">\(g_k\)</span>. Wlog <span class="math inline">\(K\)</span> covariates where covariate <span class="math inline">\(k\)</span> has <span class="math inline">\(g_k\)</span> groups can be turned into a single
+covariate by considering all grouped interactions, and such a covariate
+would contain <span class="math inline">\(G\)</span> groups where <span class="math inline">\(G\)</span> is <span class="math display">\[
+G= \prod_{k=1}^K g_k.
+\]</span> The variation distance that will measure the variation
+throughout the response propensities of each group in <span class="math inline">\(\{1,\ldots,G\}\)</span> will measure the pairwise
+difference between groups and sum up through these and dividing by the
+number of groups. When counting pairs of <span class="math inline">\(G\)</span> groups, where the pairs are
+commutative, i.e. <span class="math inline">\(\{k,l\} = \{l,k\}, k \neq
+l\)</span>, and pairing with itself is not possible i.e. <span class="math inline">\(\{k,k\} = \emptyset\)</span>, then the number of
+pairwise combinations are <span class="math display">\[
+\text{Number of possible pairwise combinations} = \frac{(G-1) \times
+G}{2}.
+\]</span></p>
+<p>The single variation distance between group <span class="math inline">\(k\)</span> and <span class="math inline">\(l\)</span> is defined as <span class="math display">\[
+|P_{\hat{\theta}}(\pi = 1 | X = k) - P_{\hat{\theta}}(\pi = 1 | X = l)|.
+\]</span> It is more convenient to use the shorthand notation $ P_{}(= 1
+| X = k) =: p_{}(k). $</p>
+<p>The total variation distance average for a single covariate with
+<span class="math inline">\(G\)</span> groups can be found as <span class="math display">\[
+\frac{2}{(G-1) \times G} \sum_{l=k+1}^G \sum_{k=1}^G
+|p_{\hat{\theta}}(k)-p_{\hat{\theta}}(l)|,
+\]</span> since</p>
+<p><span class="math display">\[\begin{align}
+&amp; |p_{\hat{\theta}}(k)-p_{\hat{\theta}}(l)| \in [0,1] \\
+\Rightarrow   \qquad  &amp; \frac{2}{(G-1) \times G} \sum_{l=k+1}^G
+\sum_{k=1}^G |p_{\hat{\theta}}(k)-p_{\hat{\theta}}(l)|
+\in [0,1].
+\end{align}\]</span></p>
+<p>In terms of “representativity”, this number is closer to zero if
+<span class="math inline">\(|p_{\hat{\theta}}(k)-p_{\hat{\theta}}(l)|\)</span>
+is small throughout the indices. If speaking of representativity as 1
+being high representativity, then it would be more natural to
+consider</p>
+<p><span class="math display">\[
+\text{Total variation distance} = V_D :=1- \frac{2}{(G-1) \times G}
+\sum_{l=k+1}^G \sum_{k=1}^G |p_{\hat{\theta}}(k)-p_{\hat{\theta}}(l)|.
+\]</span> The behaviour of the above definition of a total variation
+distance seems useful, but it seems necessary to add an indicator such
+that we are only counting probabilities with are non-degenerate. .
+Consider all the set of indices in <span class="math inline">\(\{ 1 ,
+\ldots , G\}\)</span> where all response propensities are larger than
+zero, then this set becomes <span class="math inline">\(S = \{ k \in \{
+1, \ldots , G \} : \hat{\theta}_k \neq 0 \}\)</span>, then the
+dimension/cardinality of <span class="math inline">\(S\)</span> is <span class="math inline">\(G_S\)</span>, i.e. <span class="math inline">\(|S|
+= \# S = G_S\)</span>. Hence the following total variation distance
+becomes useful <span class="math display">\[
+\tilde{V_D} :=1- \frac{2}{(G_S-1) \times G_S} \sum_{l=k+1}^{G_S}
+\sum_{k=1}^{G_S}
+1_{\{p_{\hat{\theta}}(k)&gt;0,p_{\hat{\theta}}(l)&gt;0\}}|p_{\hat{\theta}}(k)-p_{\hat{\theta}}(l)|.
+\]</span></p>
+<p>Choosing <span class="math inline">\(G_s\)</span> can f.x. be done by
+studying the Lasso estimator.</p>
+<p>The behaviour of the above definition of a total variation distance
+will be examined in the section called “simulation study”. The next
+section presents another representativity measure using
+R-indicators.</p>
+</details>
+<details>
+<summary>
+<font size="3"> <strong>Section 2 - Defining R-indicators for Survey
+Response</strong> </font>
+</summary>
+<p><br> The paper “Estimation of an indicator of the representativeness
+of survey response” Shlomo, Skinner and Schouten (2012) is the backbone
+for results in the paper “Theoretical Properties of Partial Indicators
+for Representative Response” Shlomo and Schouten (2013). These papers,
+and more, are written by a group collaboration named the RISQ project
 (Representativity Indicators for Survey Quality).</p>
 <p><span class="math inline">\(\textbf{Definition of
 R-indicators}\)</span></p>
@@ -542,30 +621,30 @@ E_r(\hat{\bar{p}}_U) &amp; \approx \bar{p}_s,
 <p>in order to obtain</p>
 <p><span class="math display">\[\begin{align}
 
-E\left[ \left( \hat{p}_i - \hat{\bar{p}}_U
+E_r\left[ \left( \hat{p}_i - \hat{\bar{p}}_U
 \right)^2
 \right] &amp;=
-E\left[ \left((\hat{p}_i - p_i) + (p_i-\bar{p}_U) + (\bar{p}_U -
+E_r\left[ \left((\hat{p}_i - p_i) + (p_i-\bar{p}_U) + (\bar{p}_U -
 \bar{p}_s)+(\bar{p}_s - \hat{\bar{p}}_U)\right)^2
 \right] \\
 &amp;=
-E\left[ (\hat{p}_i - p_i)^2 + (p_i-\bar{p}_U)^2 + (\bar{p}_U -
+E_r\left[ (\hat{p}_i - p_i)^2 + (p_i-\bar{p}_U)^2 + (\bar{p}_U -
 \bar{p}_s)^2+(\bar{p}_s - \hat{\bar{p}}_U)^2\right]
-+ 2E(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i - \bar{p}_U)(\bar{p}_U
-- \bar{p}_s) \\
-&amp; \qquad \qquad \qquad + \underset{=0}{\underbrace{2 E(\hat{p}_i -
-p_i)(p_i - \bar{p}_U) + 2 E(\hat{p}_i-p_i)(\bar{p}_U - \bar{p}_s) + 2
-E(p_i - \bar{p}_U)(\bar{p}_s - \hat{\bar{p}}_U) + 2 E(\bar{p}_U -
++ 2E_r(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i -
+\bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
+&amp; \qquad \qquad \qquad + \underset{=0}{\underbrace{2 E_r(\hat{p}_i -
+p_i)(p_i - \bar{p}_U) + 2 E_r(\hat{p}_i-p_i)(\bar{p}_U - \bar{p}_s) + 2
+E_r(p_i - \bar{p}_U)(\bar{p}_s - \hat{\bar{p}}_U) + 2 E_r(\bar{p}_U -
 \bar{p}_s)(\bar{p}_s-\hat{\bar{p}}_U)}} \\
-&amp;= E\left[ (\hat{p}_i - p_i)^2\right] +E\left[ (\bar{p}_s -
+&amp;= E_r\left[ (\hat{p}_i - p_i)^2\right] +E_r\left[ (\bar{p}_s -
 \hat{\bar{p}}_U)^2\right] + (p_i-\bar{p}_U)^2 + (\bar{p}_U -
 \bar{p}_s)^2 \\
-&amp; \qquad \qquad + 2E(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i -
+&amp; \qquad \qquad + 2E_r(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i -
 \bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
 &amp;=
-Var_r(\hat{p}_i) + Var(\hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U
-- \bar{p}_s)^2\\
-&amp;  \qquad \qquad  - 2 Cov(\hat{p}_i,\hat{\bar{p}}_U)-2(p_i -
+Var_r(\hat{p}_i) + Var_r(\hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 +
+(\bar{p}_U - \bar{p}_s)^2\\
+&amp;  \qquad \qquad  - 2 Cov_r(\hat{p}_i,\hat{\bar{p}}_U)-2(p_i -
 \bar{p}_U)(\bar{p}_s - \bar{p}_U) \\
 
 &amp;= Var_r(\hat{p}_i - \hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 +
@@ -661,8 +740,9 @@ to Shlomo, Skinner and Schouten (2012) <span class="math display">\[
 \]</span></p>
 <p>where <span class="math inline">\(\nabla h(\bf{x}_i^T \hat{\beta}) =
 \exp(\bf{x}_i^T\hat{\beta})/(1+\exp(\bf{x}_i^T\hat{\beta}))^2\)</span>,
-and <span class="math inline">\(h\)</span> being the link function.</p>
-<p>In terms of constant weights, the term <span class="math inline">\(N_s\)</span> is constant, then according to
+and <span class="math inline">\(h\)</span> being the link (inverse ??)
+function.</p>
+In terms of constant weights, the term <span class="math inline">\(N_s\)</span> is constant, then according to
 Shlomo, Skinner and Schouten (2012) <span class="math inline">\(\hat{\lambda}_2\)</span> becomes <span class="math display">\[
 \hat{\lambda}_2 = -(n^{-1} - N^{-1})S_p^2.
 \]</span> All in all this leads to the bias adjusted estimator of <span class="math inline">\(S_p^2\)</span> becoming <span class="math display">\[
@@ -671,7 +751,1658 @@ Shlomo, Skinner and Schouten (2012) <span class="math inline">\(\hat{\lambda}_2\
 h(\bf{x}_i^T \hat{\beta})^2 \bf{x}_i^T\left[ \sum_{ j \in s}
 \nabla h(\bf{x}_j^T
 \hat{\beta})\bf{x}_j\bf{x}_j^T\right]^{-1}\bf{x}_i^T.
-\]</span></p>
+\]</span>
+</details>
+</details>
+<details>
+<summary>
+<font size="4"> <strong>Simulation study</strong> </font>
+</summary>
+<p><br></p>
+<details>
+<summary>
+<font size="3"> <strong>Generating data</strong> </font>
+</summary>
+<p><br></p>
+<p>Using the distribution of the covariates from the data Life With a
+Heart Disease from 2020 by the Danish Heart Foundation, the distribution
+in terms of percentages looks as following when selecting the covariates
+Education, Heart Disease and Sex.</p>
+<pre class="r"><code>men &lt;- matrix(NA,nrow=6,ncol=6)
+men[1,] &lt;- c(&quot;&quot;,&quot;Education&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;)
+men[,1] &lt;- c(&quot;&quot;,&quot;Heart Disease&quot;,&quot;HF&quot;,&quot;IHD&quot;,&quot;VHD&quot;,&quot;AF&quot;)
+men[2,2:ncol(men)] &lt;- c(&quot;Basic education&quot;,&quot;Postgraduate education&quot;,&quot;Secondary education&quot;,&quot;Tertiary education&quot;,&quot;Unknown education&quot;)
+men[3:nrow(men),2:ncol(men)] &lt;- matrix(c(c(5.7,1.5,9.5,2.4,0.4),
+                                         c(7.5,1.9,12,4.5,0.7),
+                                         c(1.7,0.6,3,1.2,0.1),
+                                         c(3.2,2,7.1,2.9,0.2)),ncol=5,nrow=4,byrow=TRUE)
+
+men &lt;- data.frame(men)
+colnames(men) &lt;- colnames(c(rep(&quot;&quot;,6)))
+men[1,1] &lt;- &quot;Men&quot;
+knitr::kable(men[1:5,], format=&quot;markdown&quot;)</code></pre>
+<table>
+<colgroup>
+<col width="12%" />
+<col width="14%" />
+<col width="20%" />
+<col width="18%" />
+<col width="17%" />
+<col width="16%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left">Men</td>
+<td align="left">Education</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Heart Disease</td>
+<td align="left">Basic education</td>
+<td align="left">Postgraduate education</td>
+<td align="left">Secondary education</td>
+<td align="left">Tertiary education</td>
+<td align="left">Unknown education</td>
+</tr>
+<tr class="odd">
+<td align="left">HF</td>
+<td align="left">5.7</td>
+<td align="left">1.5</td>
+<td align="left">9.5</td>
+<td align="left">2.4</td>
+<td align="left">0.4</td>
+</tr>
+<tr class="even">
+<td align="left">IHD</td>
+<td align="left">7.5</td>
+<td align="left">1.9</td>
+<td align="left">12</td>
+<td align="left">4.5</td>
+<td align="left">0.7</td>
+</tr>
+<tr class="odd">
+<td align="left">VHD</td>
+<td align="left">1.7</td>
+<td align="left">0.6</td>
+<td align="left">3</td>
+<td align="left">1.2</td>
+<td align="left">0.1</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>women &lt;- matrix(NA,nrow=6,ncol=6)
+women[1,] &lt;- c(&quot;&quot;,&quot;Education&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;)
+women[,1] &lt;- c(&quot;&quot;,&quot;Heart Disease&quot;,&quot;HF&quot;,&quot;IHD&quot;,&quot;VHD&quot;,&quot;AF&quot;)
+women[2,2:ncol(women)] &lt;- c(&quot;Basic education&quot;,&quot;Postgraduate education&quot;,&quot;Secondary education&quot;,&quot;Tertiary education&quot;,&quot;Unknown education&quot;)
+women[3:nrow(men),2:ncol(women)] &lt;- matrix(c(c(3.4,0.3,2.7,1.1,0.2),
+                                             c(4.1,0.2,3.9,1.9,0.2),
+                                             c(1.7,0.1,1.4,0.8,0.1),
+                                             c(3.4,0.4,3.7,2.2,0.1)),ncol=5,nrow=4,byrow=TRUE)
+
+women &lt;- data.frame(women)
+colnames(women) &lt;- colnames(c(rep(&quot;&quot;,6)))
+women[1,1] &lt;- &quot;Women&quot;
+knitr::kable(women[1:6,], format=&quot;markdown&quot;)</code></pre>
+<table>
+<colgroup>
+<col width="12%" />
+<col width="14%" />
+<col width="20%" />
+<col width="18%" />
+<col width="17%" />
+<col width="16%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left">Women</td>
+<td align="left">Education</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Heart Disease</td>
+<td align="left">Basic education</td>
+<td align="left">Postgraduate education</td>
+<td align="left">Secondary education</td>
+<td align="left">Tertiary education</td>
+<td align="left">Unknown education</td>
+</tr>
+<tr class="odd">
+<td align="left">HF</td>
+<td align="left">3.4</td>
+<td align="left">0.3</td>
+<td align="left">2.7</td>
+<td align="left">1.1</td>
+<td align="left">0.2</td>
+</tr>
+<tr class="even">
+<td align="left">IHD</td>
+<td align="left">4.1</td>
+<td align="left">0.2</td>
+<td align="left">3.9</td>
+<td align="left">1.9</td>
+<td align="left">0.2</td>
+</tr>
+<tr class="odd">
+<td align="left">VHD</td>
+<td align="left">1.7</td>
+<td align="left">0.1</td>
+<td align="left">1.4</td>
+<td align="left">0.8</td>
+<td align="left">0.1</td>
+</tr>
+<tr class="even">
+<td align="left">AF</td>
+<td align="left">3.4</td>
+<td align="left">0.4</td>
+<td align="left">3.7</td>
+<td align="left">2.2</td>
+<td align="left">0.1</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>sum(as.numeric(unlist(as.vector(data.frame(men[-c(1,2),-1])))))+sum(as.numeric(unlist(as.vector(data.frame(women[-c(1,2),-1])))))</code></pre>
+<pre><code>## [1] 100</code></pre>
+<p>These sum to <span class="math inline">\(100\)</span>.</p>
+<p>Covariate are assigned to a dataframe that have the same distribution
+as above.</p>
+<pre class="r"><code>#Number of rows
+n &lt;- 1000</code></pre>
+<pre class="r"><code>#Create a model matrix with 11 columns
+df &lt;- data.frame(matrix(0,nrow=n,ncol=11))
+setDT(df)
+#Assign column names
+colnames(df) &lt;- c(&quot;Male&quot;,&quot;Female&quot;,&quot;HF&quot;,&quot;IHD&quot;,&quot;VHD&quot;,&quot;AF&quot;,&quot;Basic education&quot;,&quot;Postgraduate education&quot;,&quot;Secondary education&quot;,&quot;Tertiary education&quot;,&quot;Unknown education&quot;)
+
+#Re structure the men and women dataframes in order to use these for create data with the same covariate distribution
+men &lt;- data.frame(men[-1,])
+women &lt;- data.frame(women[-1,])
+
+#Find the indices as a function of &#39;n&#39; such that the groups in data can be assigned as having the same distribution
+ind &lt;- 
+  cumsum(c(round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100)))
+
+#Assign 1&#39;s to the covariate columns of the model matrix
+df[1:ind[1],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[1]+1):ind[2],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[2]+1):ind[3],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[3]+1):ind[4],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[4]+1):ind[5],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[5]+1):ind[6],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[6]+1):ind[7],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[7]+1):ind[8],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[8]+1):ind[9],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[9]+1):ind[10],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[10]+1):ind[11],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[11]+1):ind[12],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[12]+1):ind[13],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[13]+1):ind[14],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[14]+1):ind[15],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[15]+1):ind[16],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[16]+1):ind[17],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[17]+1):ind[18],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[18]+1):ind[19],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[19]+1):ind[20],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+
+df[(ind[20]+1):ind[21],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[21]+1):ind[22],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[22]+1):ind[23],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[23]+1):ind[24],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[24]+1):ind[25],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[25]+1):ind[26],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[26]+1):ind[27],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[27]+1):ind[28],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[28]+1):ind[29],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[29]+1):ind[30],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[30]+1):ind[31],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[31]+1):ind[32],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[32]+1):ind[33],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[33]+1):ind[34],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[34]+1):ind[35],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[35]+1):ind[36],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[36]+1):ind[37],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[37]+1):ind[38],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[38]+1):ind[39],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[39]+1):ind[40],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+knitr::kable(df[1:6,], format=&quot;markdown&quot;)</code></pre>
+<table>
+<colgroup>
+<col width="4%" />
+<col width="5%" />
+<col width="2%" />
+<col width="3%" />
+<col width="3%" />
+<col width="2%" />
+<col width="13%" />
+<col width="18%" />
+<col width="16%" />
+<col width="15%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">Male</th>
+<th align="right">Female</th>
+<th align="right">HF</th>
+<th align="right">IHD</th>
+<th align="right">VHD</th>
+<th align="right">AF</th>
+<th align="right">Basic education</th>
+<th align="right">Postgraduate education</th>
+<th align="right">Secondary education</th>
+<th align="right">Tertiary education</th>
+<th align="right">Unknown education</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>The count is (total <span class="math inline">\(n=1000\)</span>)</p>
+<pre class="r"><code>knitr::kable(colSums(df), format=&quot;markdown&quot;,col.names=&quot;n&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Male</td>
+<td align="right">681</td>
+</tr>
+<tr class="even">
+<td align="left">Female</td>
+<td align="right">319</td>
+</tr>
+<tr class="odd">
+<td align="left">HF</td>
+<td align="right">272</td>
+</tr>
+<tr class="even">
+<td align="left">IHD</td>
+<td align="right">369</td>
+</tr>
+<tr class="odd">
+<td align="left">VHD</td>
+<td align="right">107</td>
+</tr>
+<tr class="even">
+<td align="left">AF</td>
+<td align="right">252</td>
+</tr>
+<tr class="odd">
+<td align="left">Basic education</td>
+<td align="right">307</td>
+</tr>
+<tr class="even">
+<td align="left">Postgraduate education</td>
+<td align="right">70</td>
+</tr>
+<tr class="odd">
+<td align="left">Secondary education</td>
+<td align="right">433</td>
+</tr>
+<tr class="even">
+<td align="left">Tertiary education</td>
+<td align="right">170</td>
+</tr>
+<tr class="odd">
+<td align="left">Unknown education</td>
+<td align="right">20</td>
+</tr>
+</tbody>
+</table>
+<p>Each group is assigned a binary response simulated from the binomial
+distribution, and all the simulations come from a binomial distribution
+with <strong>response probability equal to</strong> <span class="math inline">\(0.5\)</span>.</p>
+<pre class="r"><code>df$Response &lt;- 0
+#df &lt;- data.frame(df)
+
+df[1:ind[1],&quot;Response&quot;] &lt;- rbinom(ind[1],1,0.5)
+df[(ind[1]+1):ind[2],&quot;Response&quot;] &lt;- rbinom(ind[2]-ind[1],1,0.5)
+df[(ind[2]+1):ind[3],&quot;Response&quot;] &lt;- rbinom(ind[3]-ind[2],1,0.5)
+df[(ind[3]+1):ind[4],&quot;Response&quot;] &lt;- rbinom(ind[4]-ind[3],1,0.5)
+df[(ind[4]+1):ind[5],&quot;Response&quot;] &lt;- rbinom(ind[5]-ind[4],1,0.5)
+
+df[(ind[5]+1):ind[6],&quot;Response&quot;] &lt;- rbinom(ind[6]-ind[5],1,0.5)
+df[(ind[6]+1):ind[7],&quot;Response&quot;] &lt;- rbinom(ind[7]-ind[6],1,0.5)
+df[(ind[7]+1):ind[8],&quot;Response&quot;] &lt;- rbinom(ind[8]-ind[7],1,0.5)
+df[(ind[8]+1):ind[9],&quot;Response&quot;] &lt;- rbinom(ind[9]-ind[8],1,0.5)
+df[(ind[9]+1):ind[10],&quot;Response&quot;] &lt;- rbinom(ind[10]-ind[9],1,0.5)
+
+df[(ind[10]+1):ind[11],&quot;Response&quot;] &lt;- rbinom(ind[11]-ind[10],1,0.5)
+df[(ind[11]+1):ind[12],&quot;Response&quot;] &lt;- rbinom(ind[12]-ind[11],1,0.5)
+df[(ind[12]+1):ind[13],&quot;Response&quot;] &lt;- rbinom(ind[13]-ind[12],1,0.5)
+df[(ind[13]+1):ind[14],&quot;Response&quot;] &lt;- rbinom(ind[14]-ind[13],1,0.5)
+df[(ind[14]+1):ind[15],&quot;Response&quot;] &lt;- rbinom(ind[15]-ind[14],1,0.5)
+
+df[(ind[15]+1):ind[16],&quot;Response&quot;] &lt;- rbinom(ind[16]-ind[15],1,0.5)
+df[(ind[16]+1):ind[17],&quot;Response&quot;] &lt;- rbinom(ind[17]-ind[16],1,0.5)
+df[(ind[17]+1):ind[18],&quot;Response&quot;] &lt;- rbinom(ind[18]-ind[17],1,0.5)
+df[(ind[18]+1):ind[19],&quot;Response&quot;] &lt;- rbinom(ind[19]-ind[18],1,0.5)
+df[(ind[19]+1):ind[20],&quot;Response&quot;] &lt;- rbinom(ind[20]-ind[19],1,0.5)
+
+
+df[(ind[20]+1):ind[21],&quot;Response&quot;] &lt;- rbinom(ind[21]-ind[20],1,0.5)
+df[(ind[21]+1):ind[22],&quot;Response&quot;] &lt;- rbinom(ind[22]-ind[21],1,0.5)
+df[(ind[22]+1):ind[23],&quot;Response&quot;] &lt;- rbinom(ind[23]-ind[22],1,0.5)
+df[(ind[23]+1):ind[24],&quot;Response&quot;] &lt;- rbinom(ind[24]-ind[23],1,0.5)
+df[(ind[24]+1):ind[25],&quot;Response&quot;] &lt;- rbinom(ind[25]-ind[24],1,0.5)
+
+df[(ind[25]+1):ind[26],&quot;Response&quot;] &lt;- rbinom(ind[26]-ind[25],1,0.5)
+df[(ind[26]+1):ind[27],&quot;Response&quot;] &lt;- rbinom(ind[27]-ind[26],1,0.5)
+df[(ind[27]+1):ind[28],&quot;Response&quot;] &lt;- rbinom(ind[28]-ind[27],1,0.5)
+df[(ind[28]+1):ind[29],&quot;Response&quot;] &lt;- rbinom(ind[29]-ind[28],1,0.5)
+df[(ind[29]+1):ind[30],&quot;Response&quot;] &lt;- rbinom(ind[30]-ind[29],1,0.5)
+
+df[(ind[30]+1):ind[31],&quot;Response&quot;] &lt;- rbinom(ind[31]-ind[30],1,0.5)
+df[(ind[31]+1):ind[32],&quot;Response&quot;] &lt;- rbinom(ind[32]-ind[31],1,0.5)
+df[(ind[32]+1):ind[33],&quot;Response&quot;] &lt;- rbinom(ind[33]-ind[32],1,0.5)
+df[(ind[33]+1):ind[34],&quot;Response&quot;] &lt;- rbinom(ind[34]-ind[33],1,0.5)
+df[(ind[34]+1):ind[35],&quot;Response&quot;] &lt;- rbinom(ind[35]-ind[34],1,0.5)
+
+df[(ind[35]+1):ind[36],&quot;Response&quot;] &lt;- rbinom(ind[36]-ind[35],1,0.5)
+df[(ind[36]+1):ind[37],&quot;Response&quot;] &lt;- rbinom(ind[37]-ind[36],1,0.5)
+df[(ind[37]+1):ind[38],&quot;Response&quot;] &lt;- rbinom(ind[38]-ind[37],1,0.5)
+df[(ind[38]+1):ind[39],&quot;Response&quot;] &lt;- rbinom(ind[39]-ind[38],1,0.5)
+df[(ind[39]+1):ind[40],&quot;Response&quot;] &lt;- rbinom(ind[40]-ind[39],1,0.5)
+
+p1 &lt;-unlist(df[,sum(Response)/.N,by=c(&quot;Male&quot;,&quot;Female&quot;)][,3])
+names(p1) &lt;- c(&quot;Male&quot;,&quot;Female&quot;)
+
+p2 &lt;- unlist(df[,sum(Response)/.N,by=c(&quot;HF&quot;,&quot;IHD&quot;,&quot;VHD&quot;,&quot;AF&quot;)][,5])
+names(p2) &lt;- c(&quot;HF&quot;,&quot;IHD&quot;,&quot;VHD&quot;,&quot;AF&quot;)
+
+p3 &lt;- unlist(df[,sum(Response)/.N,by=c(&quot;Basic education&quot;,&quot;Postgraduate education&quot;,&quot;Secondary education&quot;,&quot;Tertiary education&quot;,&quot;Unknown education&quot;)][,6])
+names(p3) &lt;- c(&quot;Basic education&quot;,&quot;Postgraduate education&quot;,&quot;Secondary education&quot;,&quot;Tertiary education&quot;,&quot;Unknown education&quot;)
+
+par(mfrow=c(1,3))
+barplot(p1,ylim=c(0,1),ylab=&quot;Response %&quot;)
+barplot(p2,ylim=c(0,1),ylab=&quot;Response %&quot;)
+barplot(p3,ylim=c(0,1),ylab=&quot;Response %&quot;)</code></pre>
+<p><img src="data:image/png;base64,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3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7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" width="672" /></p>
+<p>All the covariate combinations are then turned into a single
+covariate, and with <span class="math inline">\(3\)</span> groups with
+<span class="math inline">\(2, 4\)</span> and <span class="math inline">\(5\)</span> levels each leads to <span class="math inline">\(2\cdot 4 \cdot 5=40\)</span> groups in total.</p>
+<pre class="r"><code>df$COV &lt;- NA
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+
+
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+knitr::kable(df[sample(n,6),], format=&quot;markdown&quot;)</code></pre>
+<table>
+<colgroup>
+<col width="3%" />
+<col width="4%" />
+<col width="1%" />
+<col width="2%" />
+<col width="2%" />
+<col width="1%" />
+<col width="9%" />
+<col width="14%" />
+<col width="12%" />
+<col width="11%" />
+<col width="11%" />
+<col width="5%" />
+<col width="19%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">Male</th>
+<th align="right">Female</th>
+<th align="right">HF</th>
+<th align="right">IHD</th>
+<th align="right">VHD</th>
+<th align="right">AF</th>
+<th align="right">Basic education</th>
+<th align="right">Postgraduate education</th>
+<th align="right">Secondary education</th>
+<th align="right">Tertiary education</th>
+<th align="right">Unknown education</th>
+<th align="right">Response</th>
+<th align="left">COV</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">Male_AF_Basic education</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">Female_HF_Basic education</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">Female_IHD_Tertiary education</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">Female_IHD_Secondary education</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">Male_AF_Secondary education</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">Male_IHD_Tertiary education</td>
+</tr>
+</tbody>
+</table>
+<p>The responses were simulated for each covariate combination, but due
+to the low count within some combinations the response simulations
+manage to have only <span class="math inline">\(1\)</span>’s or <span class="math inline">\(0\)</span>’s.</p>
+<pre class="r"><code>A &lt;- df[,round(sum(Response)/.N*100,1),by=COV]
+names(A) &lt;- c(&quot;COV&quot;,&quot;Response %&quot;)
+r &lt;- data.frame(cbind(c(&quot;...&quot;,&quot;...&quot;),c(&quot;...&quot;,&quot;...&quot;)))
+names(r) &lt;- names(A)
+setDT(r)
+knitr::kable(rbind(head(A[order(A$`Response %`)]),
+r,
+tail(A[order(A$`Response %`)])), format=&quot;markdown&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">COV</th>
+<th align="left">Response %</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Male_VHD_Unknown education</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">Male_AF_Unknown education</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Female_VHD_Unknown education</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">Female_AF_Unknown education</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Male_HF_Unknown education</td>
+<td align="left">25</td>
+</tr>
+<tr class="even">
+<td align="left">Male_IHD_Unknown education</td>
+<td align="left">28.6</td>
+</tr>
+<tr class="odd">
+<td align="left">…</td>
+<td align="left">…</td>
+</tr>
+<tr class="even">
+<td align="left">…</td>
+<td align="left">…</td>
+</tr>
+<tr class="odd">
+<td align="left">Male_IHD_Postgraduate education</td>
+<td align="left">57.9</td>
+</tr>
+<tr class="even">
+<td align="left">Male_HF_Tertiary education</td>
+<td align="left">58.3</td>
+</tr>
+<tr class="odd">
+<td align="left">Female_VHD_Tertiary education</td>
+<td align="left">62.5</td>
+</tr>
+<tr class="even">
+<td align="left">Female_HF_Basic education</td>
+<td align="left">64.7</td>
+</tr>
+<tr class="odd">
+<td align="left">Female_HF_Postgraduate education</td>
+<td align="left">66.7</td>
+</tr>
+<tr class="even">
+<td align="left">Female_VHD_Postgraduate education</td>
+<td align="left">100</td>
+</tr>
+</tbody>
+</table>
+</details>
+<details>
+<summary>
+<font size="3"> <strong>Representativity results</strong> </font>
+</summary>
+<p><br></p>
+<p>For the analysis of the representativity, the following measures will
+be computed: <span class="math display">\[\begin{align}
+V_D &amp; =1- \frac{2}{(G-1) \times G} \sum_{l=k+1}^G \sum_{k=1}^G
+|p_{\hat{\theta}}(k)-p_{\hat{\theta}}(l)|, \\
+\tilde{V}_D &amp; =1- \frac{2}{(G_S-1) \times G_S} \sum_{l=k+1}^{G_S}
+\sum_{k=1}^{G_S}
+1_{\{p_{\hat{\theta}}(k)&gt;0,p_{\hat{\theta}}(l)&gt;0\}}|p_{\hat{\theta}}(k)-p_{\hat{\theta}}(l)|
+\\
+\hat{R}_p &amp; = 1- 2\hat{S}_p^2 = 1-2 \cdot \frac{1}{N-1}\sum_{i \in
+s} \omega_i \, ( \hat{p}(x_i) - \hat{\bar{p}}_U)^2, \\
+\tilde{R}_p &amp; = 1-2 \tilde{S}^2_p = 1-2 \left( \hat{S}^2_p -
+\hat{\lambda}_1- \hat{\lambda}_2 = (1+n^{-1} - N^{-1})\hat{S}_p^2
+-  \frac{1}{n} \sum_{i \in s} \nabla h(\bf{x}_i^T \hat{\beta})^2
+\bf{x}_i^T\left[ \sum_{ j \in s}
+\nabla h(\bf{x}_j^T \hat{\beta})\bf{x}_j\bf{x}_j^T\right]^{-1}\bf{x}_i^T
+\right).
+\end{align}\]</span> <span class="math inline">\(\tilde{R}_p\)</span>
+can only be computed using the link function <span class="math inline">\(h\)</span>.</p>
+<p>A GLM model is fitted with the explanatory variables being the
+covariate combinations.</p>
+<pre class="r"><code>mod &lt;- &quot;glm&quot;
+if(mod == &quot;glm&quot;){m &lt;- glm(Response~COV,data=df,family=&quot;binomial&quot;)}
+if(mod == &quot;cv.glmnet&quot;){m &lt;- cv.glmnet(y=df$Response,x=as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;)}</code></pre>
+<p>No fitted response probabilities are <span class="math inline">\(0\)</span>.</p>
+<pre class="r"><code>options(scipen=999)
+print(c(&quot;Minimum response probability&quot;=min(fitted(m))))</code></pre>
+<pre><code>## Minimum response probability 
+##              0.0000004721032</code></pre>
+<p>This means that <span class="math inline">\(V_D =
+\tilde{V}_D\)</span>.</p>
+<pre class="r"><code>if(class(m)[1] == &quot;glm&quot;){pred_mat &lt;- data.frame(distinct(df[,c(&quot;COV&quot;)]))}
+if(class(m)[1] == &quot;cv.glmnet&quot;){pred_mat &lt;- as.matrix(distinct(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]))}
+#Total variation distance
+A &lt;- data.frame(COV=distinct(df[,-c(&quot;Response&quot;)])[,&quot;COV&quot;],P=predict(m,pred_mat,type=&quot;response&quot;))
+A &lt;- A[&quot;P&quot;&gt;0,]
+G_s &lt;- dim(A)[1]
+
+for(i in 1:(dim(A)[1]-1)){
+  if( i == 1){
+    a &lt;- abs(as.numeric(unlist(A[1,2])-unlist(A[-1,2])))
+    names(a) &lt;- paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;)
+    A &lt;- A[-1,]
+    
+  }else{
+    a &lt;- c(a,abs(as.numeric(unlist(A[1,2])-unlist(A[-1,2]))))
+    names(a) &lt;- c(names(a)[names(a) != &quot;&quot;],paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;))
+    A &lt;- A[-1,]
+  }
+}
+
+#R-indicator
+if(class(m)[1] == &quot;glm&quot;){
+  df_R &lt;- cbind(df,P=predict(m,data.frame(df[,c(&quot;COV&quot;)]),type=&quot;response&quot;))
+  beta &lt;- m$coefficients
+  mod_mat &lt;- model.matrix(m)
+  lin_pred &lt;- (model.matrix(m)) %*% beta
+}
+
+if(class(m)[1] == &quot;cv.glmnet&quot;){ 
+  df_R &lt;- cbind(df,P=predict(m,as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),type=&quot;response&quot;,s=m$lambda.min))
+  colnames(df_R)[ncol(df_R)] &lt;- &quot;P&quot;
+  beta &lt;- coef(m,s=m$lambda.min)
+  mod_mat &lt;- as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)])
+  beta &lt;- beta[,1][-c(which(names(beta[,1]) == &quot;(Intercept)&quot;))]
+}
+
+denom &lt;- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
+
+S_2 &lt;- (sum(((df_R$P - mean(df_R$Response))^2))/n)
+data.frame(Model=paste(mod),
+  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
+  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
+  R_hat=round(1-2*sqrt(S_2),3))</code></pre>
+<pre><code>##   Model   V_d R_tilde R_hat
+## 1   glm 0.805   0.843 0.841</code></pre>
+<p>In the setting with <span class="math inline">\(n=1000\)</span> and
+all response probabilities equal to <span class="math inline">\(0.5\)</span> and using GLM’s, the representativity
+measures become:</p>
+<pre class="r"><code>knitr::kable(data.frame(Model=paste(mod),
+  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
+  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
+  R_hat=round(1-2*sqrt(S_2),3)), caption=&quot;p=0.5&quot;,format=&quot;markdown&quot;)</code></pre>
+<table>
+<caption>p=0.5</caption>
+<thead>
+<tr class="header">
+<th align="left">Model</th>
+<th align="right">V_d</th>
+<th align="right">R_tilde</th>
+<th align="right">R_hat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">glm</td>
+<td align="right">0.805</td>
+<td align="right">0.843</td>
+<td align="right">0.841</td>
+</tr>
+</tbody>
+</table>
+<p>The Lasso model makes subset selection, so the measure <span class="math inline">\(V_d\)</span> is calculated only for the groups
+which have non-zero coefficients.</p>
+<pre class="r"><code>mod &lt;- &quot;cv.glmnet&quot;
+if(mod == &quot;glm&quot;){m &lt;- glm(Response~COV,data=df,family=&quot;binomial&quot;)}
+if(mod == &quot;cv.glmnet&quot;){m &lt;- cv.glmnet(y=df$Response,x=as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;)}
+
+
+if(mod == &quot;cv.glmnet&quot;){
+  sel_cov &lt;- coef(m,s=m$lambda.1se)
+  sel_cov &lt;- sel_cov[,1][-c(which(names(sel_cov[,1]) == &quot;(Intercept)&quot;))]
+  sel_cov &lt;- sel_cov[sel_cov!= 0]
+  sel_cov_names &lt;- names(sel_cov)
+}
+
+if(class(m)[1] == &quot;glm&quot;){pred_mat &lt;- data.frame(distinct(df[,c(&quot;COV&quot;)]))}
+
+#Total variation distance
+if(class(m)[1] == &quot;glm&quot;){
+  
+  A &lt;- matrix(predict(m,pred_mat,type=&quot;response&quot;))
+  
+  colnames(A) &lt;- &quot;P&quot;
+  
+  G_s &lt;- dim(A)[1]
+  for(i in 1:(dim(A)[1]-1)){
+    if( i == 1){
+      
+      a &lt;- abs(as.numeric(unlist(A[1])-unlist(A[-1])))
+      #names(a) &lt;- paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;)
+      A &lt;- A[-1]
+      
+    }else{
+      a &lt;- c(a,abs(as.numeric(unlist(A[1])-unlist(A[-1]))))
+      #names(a) &lt;- c(names(a)[names(a) != &quot;&quot;],paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;))
+      A &lt;- A[-1]
+    }
+  }
+  1-sum(a)*2/((G_s-1)*G_s) 
+}
+if(class(m)[1] == &quot;cv.glmnet&quot;)
+{
+  if(length(sel_cov)&gt;0){
+  pred_mat &lt;- distinct(df[,..sel_cov_names])
+  temp_df &lt;- copy(distinct(df[,-..sel_cov_names][,-c(&quot;COV&quot;,&quot;Response&quot;)]))
+  pred_mat &lt;- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x &lt;- 0})[1:nrow(pred_mat),])
+  pred_mat
+  col_ind_pred_mat &lt;- match(colnames(distinct(df[,-c(&quot;COV&quot;,&quot;Response&quot;)])), colnames(pred_mat))
+  pred_mat &lt;- as.matrix(pred_mat[,..col_ind_pred_mat])
+  
+  #A &lt;- data.frame(COV=distinct(df[,-c(&quot;Response&quot;)])[,&quot;COV&quot;],P=predict(m,pred_mat,type=&quot;response&quot;))
+  A &lt;- matrix(predict(m,pred_mat,type=&quot;response&quot;))
+  
+  colnames(A) &lt;- &quot;P&quot;
+  
+  G_s &lt;- dim(A)[1]
+  for(i in 1:(dim(A)[1]-1)){
+    if( i == 1){
+      
+      a &lt;- abs(as.numeric(unlist(A[1])-unlist(A[-1])))
+      #names(a) &lt;- paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;)
+      A &lt;- A[-1]
+      
+    }else{
+      a &lt;- c(a,abs(as.numeric(unlist(A[1])-unlist(A[-1]))))
+      #names(a) &lt;- c(names(a)[names(a) != &quot;&quot;],paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;))
+      A &lt;- A[-1]
+    }
+  }
+  1-sum(a)*2/((G_s-1)*G_s) 
+}else{
+  a &lt;- 0
+  G_s &lt;- 2
+}}
+#R-indicator
+if(class(m)[1] == &quot;glm&quot;){
+  df_R &lt;- cbind(df,P=predict(m,data.frame(df[,c(&quot;COV&quot;)]),type=&quot;response&quot;))
+  beta &lt;- m$coefficients
+  mod_mat &lt;- model.matrix(m)
+  lin_pred &lt;- (model.matrix(m)) %*% beta
+}
+
+if(class(m)[1] == &quot;cv.glmnet&quot;){ 
+  df_R &lt;- cbind(df,P=predict(m,as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),type=&quot;response&quot;,s=m$lambda.min))
+  colnames(df_R)[ncol(df_R)] &lt;- &quot;P&quot;
+  beta &lt;- coef(m,s=m$lambda.min)
+  mod_mat &lt;- as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)])
+  beta &lt;- beta[,1][-c(which(names(beta[,1]) == &quot;(Intercept)&quot;))]
+}
+
+denom &lt;- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
+
+S_2 &lt;- (sum(((df_R$P - mean(df_R$Response))^2))/n)
+
+knitr::kable(data.frame(Model=paste(mod),
+  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
+  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
+  R_hat=round(1-2*sqrt(S_2),3)), caption=&quot;p=0.5&quot;,format=&quot;markdown&quot;)</code></pre>
+<table>
+<caption>p=0.5</caption>
+<thead>
+<tr class="header">
+<th align="left">Model</th>
+<th align="right">V_d</th>
+<th align="right">R_tilde</th>
+<th align="right">R_hat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">cv.glmnet</td>
+<td align="right">1</td>
+<td align="right">0.956</td>
+<td align="right">0.952</td>
+</tr>
+</tbody>
+</table>
+<p>The Lasso can see that there is no need for coefficient apart from
+the intercept, and thus the representativity is <span class="math inline">\(100\%\)</span>.</p>
+<p>The tuning parameters in the above settings are: <strong>sample size
+<span class="math inline">\(n\)</span>, the ‘true’ response
+probabilities and also which model to use (GLM or Lasso)</strong>.
+Creating a function from the above code lets us examine the
+representativity measures when changing the tuning parameters.</p>
+<pre class="r"><code>representativity_simulation &lt;- function(n,mod,p){
+men &lt;- matrix(NA,nrow=6,ncol=6)
+men[1,] &lt;- c(&quot;&quot;,&quot;Education&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;)
+men[,1] &lt;- c(&quot;&quot;,&quot;Heart Disease&quot;,&quot;HF&quot;,&quot;IHD&quot;,&quot;VHD&quot;,&quot;AF&quot;)
+men[2,2:ncol(men)] &lt;- c(&quot;Basic education&quot;,&quot;Postgraduate education&quot;,&quot;Secondary education&quot;,&quot;Tertiary education&quot;,&quot;Unknown education&quot;)
+men[3:nrow(men),2:ncol(men)] &lt;- matrix(c(c(5.7,1.5,9.5,2.4,0.4),
+                                         c(7.5,1.9,12,4.5,0.7),
+                                         c(1.7,0.6,3,1.2,0.1),
+                                         c(3.2,2,7.1,2.9,0.2)),ncol=5,nrow=4,byrow=TRUE)
+
+men &lt;- data.frame(men)
+colnames(men) &lt;- colnames(c(rep(&quot;&quot;,6)))
+men[1,1] &lt;- &quot;Men&quot;
+
+women &lt;- matrix(NA,nrow=6,ncol=6)
+women[1,] &lt;- c(&quot;&quot;,&quot;Education&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;)
+women[,1] &lt;- c(&quot;&quot;,&quot;Heart Disease&quot;,&quot;HF&quot;,&quot;IHD&quot;,&quot;VHD&quot;,&quot;AF&quot;)
+women[2,2:ncol(women)] &lt;- c(&quot;Basic education&quot;,&quot;Postgraduate education&quot;,&quot;Secondary education&quot;,&quot;Tertiary education&quot;,&quot;Unknown education&quot;)
+women[3:nrow(men),2:ncol(women)] &lt;- matrix(c(c(3.4,0.3,2.7,1.1,0.2),
+                                             c(4.1,0.2,3.9,1.9,0.2),
+                                             c(1.7,0.1,1.4,0.8,0.1),
+                                             c(3.4,0.4,3.7,2.2,0.1)),ncol=5,nrow=4,byrow=TRUE)
+
+women &lt;- data.frame(women)
+colnames(women) &lt;- colnames(c(rep(&quot;&quot;,6)))
+women[1,1] &lt;- &quot;Women&quot;
+
+
+#n &lt;- 5000
+
+df &lt;- data.frame(matrix(0,nrow=n,ncol=11))
+setDT(df)
+colnames(df) &lt;- c(&quot;Male&quot;,&quot;Female&quot;,&quot;HF&quot;,&quot;IHD&quot;,&quot;VHD&quot;,&quot;AF&quot;,&quot;Basic education&quot;,&quot;Postgraduate education&quot;,&quot;Secondary education&quot;,&quot;Tertiary education&quot;,&quot;Unknown education&quot;)
+
+#Assign half of the records as male and female
+#colnames(df) &lt;- c(&quot;Sex&quot;,&quot;Heart Disease&quot;)
+men &lt;- data.frame(men[-1,])
+women &lt;- data.frame(women[-1,])
+
+round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Basic education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100)+
+  
+  round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Basic education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100)+
+  
+  round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Basic education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100)+
+  
+  round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Basic education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100)+
+  round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100)+
+  
+  round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Basic education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100)+
+  
+  round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Basic education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100)+
+  
+  round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Basic education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100)+
+  
+  round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Basic education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100)+
+  round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100)
+
+
+ind &lt;- 
+  cumsum(c(round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;HF&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;IHD&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;VHD&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(men[which(men[,1] == &quot;AF&quot;),which(men[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;HF&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;IHD&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;VHD&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100),
+           
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Basic education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Postgraduate education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Secondary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Tertiary education&quot;)])/100),
+           round(n*as.numeric(women[which(women[,1] == &quot;AF&quot;),which(women[1,] == &quot;Unknown education&quot;)])/100)))
+
+
+df[1:ind[1],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[1]+1):ind[2],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[2]+1):ind[3],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[3]+1):ind[4],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[4]+1):ind[5],c(&quot;Male&quot;,&quot;HF&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[5]+1):ind[6],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[6]+1):ind[7],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[7]+1):ind[8],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[8]+1):ind[9],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[9]+1):ind[10],c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[10]+1):ind[11],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[11]+1):ind[12],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[12]+1):ind[13],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[13]+1):ind[14],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[14]+1):ind[15],c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[15]+1):ind[16],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[16]+1):ind[17],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[17]+1):ind[18],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[18]+1):ind[19],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[19]+1):ind[20],c(&quot;Male&quot;,&quot;AF&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+
+df[(ind[20]+1):ind[21],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[21]+1):ind[22],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[22]+1):ind[23],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[23]+1):ind[24],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[24]+1):ind[25],c(&quot;Female&quot;,&quot;HF&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[25]+1):ind[26],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[26]+1):ind[27],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[27]+1):ind[28],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[28]+1):ind[29],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[29]+1):ind[30],c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[30]+1):ind[31],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[31]+1):ind[32],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[32]+1):ind[33],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[33]+1):ind[34],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[34]+1):ind[35],c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+df[(ind[35]+1):ind[36],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Basic education&quot;)] &lt;- 1
+df[(ind[36]+1):ind[37],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;)] &lt;- 1
+df[(ind[37]+1):ind[38],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Secondary education&quot;)] &lt;- 1
+df[(ind[38]+1):ind[39],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;)] &lt;- 1
+df[(ind[39]+1):ind[40],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Unknown education&quot;)] &lt;- 1
+
+
+
+df$Response &lt;- 0
+
+#p &lt;- c(rep(0.9,20),rep(0.5,20))
+df[1:ind[1],&quot;Response&quot;] &lt;- rbinom(ind[1],1,p[1]) #1
+df[(ind[1]+1):ind[2],&quot;Response&quot;] &lt;- rbinom(ind[2]-ind[1],1,p[2]) #2
+df[(ind[2]+1):ind[3],&quot;Response&quot;] &lt;- rbinom(ind[3]-ind[2],1,p[3]) #3
+df[(ind[3]+1):ind[4],&quot;Response&quot;] &lt;- rbinom(ind[4]-ind[3],1,p[4]) #4
+df[(ind[4]+1):ind[5],&quot;Response&quot;] &lt;- rbinom(ind[5]-ind[4],1,p[5]) #5
+ 
+df[(ind[5]+1):ind[6],&quot;Response&quot;] &lt;- rbinom(ind[6]-ind[5],1,p[6]) #6
+df[(ind[6]+1):ind[7],&quot;Response&quot;] &lt;- rbinom(ind[7]-ind[6],1,p[7]) #7
+df[(ind[7]+1):ind[8],&quot;Response&quot;] &lt;- rbinom(ind[8]-ind[7],1,p[8]) #8
+df[(ind[8]+1):ind[9],&quot;Response&quot;] &lt;- rbinom(ind[9]-ind[8],1,p[9]) #9
+df[(ind[9]+1):ind[10],&quot;Response&quot;] &lt;- rbinom(ind[10]-ind[9],1,p[10]) #10
+
+df[(ind[10]+1):ind[11],&quot;Response&quot;] &lt;- rbinom(ind[11]-ind[10],1,p[11]) #11
+df[(ind[11]+1):ind[12],&quot;Response&quot;] &lt;- rbinom(ind[12]-ind[11],1,p[12]) #12
+df[(ind[12]+1):ind[13],&quot;Response&quot;] &lt;- rbinom(ind[13]-ind[12],1,p[13]) #13
+df[(ind[13]+1):ind[14],&quot;Response&quot;] &lt;- rbinom(ind[14]-ind[13],1,p[14]) #14
+df[(ind[14]+1):ind[15],&quot;Response&quot;] &lt;- rbinom(ind[15]-ind[14],1,p[15]) #15
+
+df[(ind[15]+1):ind[16],&quot;Response&quot;] &lt;- rbinom(ind[16]-ind[15],1,p[16]) #16
+df[(ind[16]+1):ind[17],&quot;Response&quot;] &lt;- rbinom(ind[17]-ind[16],1,p[17]) #17
+df[(ind[17]+1):ind[18],&quot;Response&quot;] &lt;- rbinom(ind[18]-ind[17],1,p[18]) #18
+df[(ind[18]+1):ind[19],&quot;Response&quot;] &lt;- rbinom(ind[19]-ind[18],1,p[19]) #19
+df[(ind[19]+1):ind[20],&quot;Response&quot;] &lt;- rbinom(ind[20]-ind[19],1,p[20]) #20
+
+
+df[(ind[20]+1):ind[21],&quot;Response&quot;] &lt;- rbinom(ind[21]-ind[20],1,p[21]) #21
+df[(ind[21]+1):ind[22],&quot;Response&quot;] &lt;- rbinom(ind[22]-ind[21],1,p[22]) #22
+df[(ind[22]+1):ind[23],&quot;Response&quot;] &lt;- rbinom(ind[23]-ind[22],1,p[23]) #23
+df[(ind[23]+1):ind[24],&quot;Response&quot;] &lt;- rbinom(ind[24]-ind[23],1,p[24]) #24
+df[(ind[24]+1):ind[25],&quot;Response&quot;] &lt;- rbinom(ind[25]-ind[24],1,p[25]) #25
+
+df[(ind[25]+1):ind[26],&quot;Response&quot;] &lt;- rbinom(ind[26]-ind[25],1,p[26]) #26
+df[(ind[26]+1):ind[27],&quot;Response&quot;] &lt;- rbinom(ind[27]-ind[26],1,p[27]) #27
+df[(ind[27]+1):ind[28],&quot;Response&quot;] &lt;- rbinom(ind[28]-ind[27],1,p[28]) #28
+df[(ind[28]+1):ind[29],&quot;Response&quot;] &lt;- rbinom(ind[29]-ind[28],1,p[29]) #29
+df[(ind[29]+1):ind[30],&quot;Response&quot;] &lt;- rbinom(ind[30]-ind[29],1,p[30]) #30
+
+df[(ind[30]+1):ind[31],&quot;Response&quot;] &lt;- rbinom(ind[31]-ind[30],1,p[31]) #31
+df[(ind[31]+1):ind[32],&quot;Response&quot;] &lt;- rbinom(ind[32]-ind[31],1,p[32]) #32
+df[(ind[32]+1):ind[33],&quot;Response&quot;] &lt;- rbinom(ind[33]-ind[32],1,p[33]) #33
+df[(ind[33]+1):ind[34],&quot;Response&quot;] &lt;- rbinom(ind[34]-ind[33],1,p[34]) #34
+df[(ind[34]+1):ind[35],&quot;Response&quot;] &lt;- rbinom(ind[35]-ind[34],1,p[35]) #35
+
+df[(ind[35]+1):ind[36],&quot;Response&quot;] &lt;- rbinom(ind[36]-ind[35],1,p[36]) #36
+df[(ind[36]+1):ind[37],&quot;Response&quot;] &lt;- rbinom(ind[37]-ind[36],1,p[37]) #37
+df[(ind[37]+1):ind[38],&quot;Response&quot;] &lt;- rbinom(ind[38]-ind[37],1,p[38]) #38
+df[(ind[38]+1):ind[39],&quot;Response&quot;] &lt;- rbinom(ind[39]-ind[38],1,p[39]) #39
+df[(ind[39]+1):ind[40],&quot;Response&quot;] &lt;- rbinom(ind[40]-ind[39],1,p[40]) #40
+
+
+df$COV &lt;- NA
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;HF&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;HF&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Male&quot;,&quot;AF&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Male&quot;,&quot;AF&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+
+
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;HF&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;HF&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;IHD&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;VHD&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Basic education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Basic education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Postgraduate education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Secondary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Secondary education&quot;),collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
+df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
+
+
+if(mod == &quot;glm&quot;){m &lt;- glm(Response~COV,data=df,family=&quot;binomial&quot;)}
+if(mod == &quot;cv.glmnet&quot;){m &lt;- cv.glmnet(y=df$Response,x=as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;)}
+
+
+if(mod == &quot;cv.glmnet&quot;){
+  sel_cov &lt;- coef(m,s=m$lambda.1se)
+  sel_cov &lt;- sel_cov[,1][-c(which(names(sel_cov[,1]) == &quot;(Intercept)&quot;))]
+  sel_cov &lt;- sel_cov[sel_cov!= 0]
+  sel_cov_names &lt;- names(sel_cov)
+}
+
+if(class(m)[1] == &quot;glm&quot;){pred_mat &lt;- data.frame(distinct(df[,c(&quot;COV&quot;)]))}
+
+#Total variation distance
+if(class(m)[1] == &quot;glm&quot;){
+  
+  A &lt;- matrix(predict(m,pred_mat,type=&quot;response&quot;))
+  
+  colnames(A) &lt;- &quot;P&quot;
+  
+  G_s &lt;- dim(A)[1]
+  for(i in 1:(dim(A)[1]-1)){
+    if( i == 1){
+      
+      a &lt;- abs(as.numeric(unlist(A[1])-unlist(A[-1])))
+      #names(a) &lt;- paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;)
+      A &lt;- A[-1]
+      
+    }else{
+      a &lt;- c(a,abs(as.numeric(unlist(A[1])-unlist(A[-1]))))
+      #names(a) &lt;- c(names(a)[names(a) != &quot;&quot;],paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;))
+      A &lt;- A[-1]
+    }
+  }
+  1-sum(a)*2/((G_s-1)*G_s) 
+}
+if(class(m)[1] == &quot;cv.glmnet&quot;)
+{
+  if(length(sel_cov)&gt;0){
+  pred_mat &lt;- distinct(df[,..sel_cov_names])
+  temp_df &lt;- copy(distinct(df[,-..sel_cov_names][,-c(&quot;COV&quot;,&quot;Response&quot;)]))
+  pred_mat &lt;- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x &lt;- 0})[1:nrow(pred_mat),])
+  pred_mat
+  col_ind_pred_mat &lt;- match(colnames(distinct(df[,-c(&quot;COV&quot;,&quot;Response&quot;)])), colnames(pred_mat))
+  pred_mat &lt;- as.matrix(pred_mat[,..col_ind_pred_mat])
+  
+  #A &lt;- data.frame(COV=distinct(df[,-c(&quot;Response&quot;)])[,&quot;COV&quot;],P=predict(m,pred_mat,type=&quot;response&quot;))
+  A &lt;- matrix(predict(m,pred_mat,type=&quot;response&quot;))
+  
+  colnames(A) &lt;- &quot;P&quot;
+  
+  G_s &lt;- dim(A)[1]
+  for(i in 1:(dim(A)[1]-1)){
+    if( i == 1){
+      
+      a &lt;- abs(as.numeric(unlist(A[1])-unlist(A[-1])))
+      #names(a) &lt;- paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;)
+      A &lt;- A[-1]
+      
+    }else{
+      a &lt;- c(a,abs(as.numeric(unlist(A[1])-unlist(A[-1]))))
+      #names(a) &lt;- c(names(a)[names(a) != &quot;&quot;],paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;))
+      A &lt;- A[-1]
+    }
+  }
+  1-sum(a)*2/((G_s-1)*G_s) 
+}else{
+  a &lt;- 0
+  G_s &lt;- 2
+}}
+
+#R-indicator
+if(class(m)[1] == &quot;glm&quot;){
+  df_R &lt;- cbind(df,P=predict(m,data.frame(df[,c(&quot;COV&quot;)]),type=&quot;response&quot;))
+  beta &lt;- m$coefficients
+  mod_mat &lt;- model.matrix(m)
+  lin_pred &lt;- (model.matrix(m)) %*% beta
+}
+
+if(class(m)[1] == &quot;cv.glmnet&quot;){ 
+  df_R &lt;- cbind(df,P=predict(m,as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),type=&quot;response&quot;,s=m$lambda.min))
+  colnames(df_R)[ncol(df_R)] &lt;- &quot;P&quot;
+  beta &lt;- coef(m,s=m$lambda.min)
+  mod_mat &lt;- as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)])
+  beta &lt;- beta[,1][-c(which(names(beta[,1]) == &quot;(Intercept)&quot;))]
+  }
+
+denom &lt;- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
+
+S_2 &lt;- (sum(((df_R$P - mean(df_R$Response))^2))/n)
+data.frame(n=n,
+  Model=paste(mod),
+  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
+  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
+  R_hat=round(1-2*sqrt(S_2),3))
+
+
+}</code></pre>
+<p>Changing only the sample size leads to</p>
+<pre class="r"><code>knitr::kable(rbind(
+representativity_simulation(n=1000,mod=&quot;glm&quot;,p=rep(0.5,40)),
+representativity_simulation(n=1000,mod=&quot;cv.glmnet&quot;,p=rep(0.5,40)),
+representativity_simulation(n=5000,mod=&quot;glm&quot;,p=rep(0.5,40)),
+representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=rep(0.5,40))),caption=&quot;p=0.5&quot;,format=&quot;markdown&quot;)</code></pre>
+<table>
+<caption>p=0.5</caption>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="left">Model</th>
+<th align="right">V_d</th>
+<th align="right">R_tilde</th>
+<th align="right">R_hat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1000</td>
+<td align="left">glm</td>
+<td align="right">0.771</td>
+<td align="right">0.818</td>
+<td align="right">0.817</td>
+</tr>
+<tr class="even">
+<td align="right">1000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">1.000</td>
+<td align="right">0.977</td>
+<td align="right">0.970</td>
+</tr>
+<tr class="odd">
+<td align="right">5000</td>
+<td align="left">glm</td>
+<td align="right">0.910</td>
+<td align="right">0.912</td>
+<td align="right">0.911</td>
+</tr>
+<tr class="even">
+<td align="right">5000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">1.000</td>
+<td align="right">0.993</td>
+<td align="right">0.989</td>
+</tr>
+</tbody>
+</table>
+<p>It is interesting to change all the response probabilities to become
+high or low. For the Lasso model, the R-indicators show incorrect
+results.</p>
+<pre class="r"><code>knitr::kable(rbind(
+representativity_simulation(n=1000,mod=&quot;glm&quot;,p=rep(0.25,40)),
+representativity_simulation(n=1000,mod=&quot;cv.glmnet&quot;,p=rep(0.25,40)),
+representativity_simulation(n=5000,mod=&quot;glm&quot;,p=rep(0.25,40)),
+representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=rep(0.25,40))),caption=&quot;p=0.25&quot;,format=&quot;markdown&quot;)</code></pre>
+<table>
+<caption>p=0.25</caption>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="left">Model</th>
+<th align="right">V_d</th>
+<th align="right">R_tilde</th>
+<th align="right">R_hat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1000</td>
+<td align="left">glm</td>
+<td align="right">0.794</td>
+<td align="right">0.854</td>
+<td align="right">0.853</td>
+</tr>
+<tr class="even">
+<td align="right">1000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">0.898</td>
+<td align="right">0.923</td>
+<td align="right">0.922</td>
+</tr>
+<tr class="odd">
+<td align="right">5000</td>
+<td align="left">glm</td>
+<td align="right">0.912</td>
+<td align="right">0.916</td>
+<td align="right">0.915</td>
+</tr>
+<tr class="even">
+<td align="right">5000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">0.964</td>
+<td align="right">0.978</td>
+<td align="right">0.977</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>knitr::kable(rbind(
+representativity_simulation(n=1000,mod=&quot;glm&quot;,p=rep(0.8,40)),
+representativity_simulation(n=1000,mod=&quot;cv.glmnet&quot;,p=rep(0.8,40)),
+representativity_simulation(n=5000,mod=&quot;glm&quot;,p=rep(0.8,40)),
+representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=rep(0.8,40))),caption=&quot;p=0.8&quot;,format=&quot;markdown&quot;)</code></pre>
+<table>
+<caption>p=0.8</caption>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="left">Model</th>
+<th align="right">V_d</th>
+<th align="right">R_tilde</th>
+<th align="right">R_hat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1000</td>
+<td align="left">glm</td>
+<td align="right">0.838</td>
+<td align="right">0.825</td>
+<td align="right">0.824</td>
+</tr>
+<tr class="even">
+<td align="right">1000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">0.932</td>
+<td align="right">0.958</td>
+<td align="right">0.955</td>
+</tr>
+<tr class="odd">
+<td align="right">5000</td>
+<td align="left">glm</td>
+<td align="right">0.906</td>
+<td align="right">0.922</td>
+<td align="right">0.922</td>
+</tr>
+<tr class="even">
+<td align="right">5000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">0.977</td>
+<td align="right">0.984</td>
+<td align="right">0.983</td>
+</tr>
+</tbody>
+</table>
+<p>Now we will vary the response probabilities for the 40 groups.</p>
+<p>The first <span class="math inline">\(20\)</span> groups are male,
+and then female. The first <span class="math inline">\(5\)</span> groups
+are male with Heart Failure. The subsequent are males with Ischemic
+heart disease and so on.</p>
+<p>First a simulation is made when males have a true reponse probability
+of <span class="math inline">\(30\%\)</span> and female have a true
+response probability of <span class="math inline">\(80\%\)</span>.</p>
+<pre class="r"><code>knitr::kable(rbind(
+representativity_simulation(n=1000,mod=&quot;glm&quot;,p=c(rep(0.3,20),rep(0.8,20))),
+representativity_simulation(n=1000,mod=&quot;cv.glmnet&quot;,p=c(rep(0.3,20),rep(0.8,20))),
+representativity_simulation(n=5000,mod=&quot;glm&quot;,p=c(rep(0.3,20),rep(0.8,20))),
+representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=c(rep(0.3,20),rep(0.8,20)))),caption=&quot;p(male)=0.3, p(female)=0.8&quot;,format=&quot;markdown&quot;)</code></pre>
+<table>
+<caption>p(male)=0.3, p(female)=0.8</caption>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="left">Model</th>
+<th align="right">V_d</th>
+<th align="right">R_tilde</th>
+<th align="right">R_hat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1000</td>
+<td align="left">glm</td>
+<td align="right">0.642</td>
+<td align="right">0.490</td>
+<td align="right">0.490</td>
+</tr>
+<tr class="even">
+<td align="right">1000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">0.681</td>
+<td align="right">0.536</td>
+<td align="right">0.536</td>
+</tr>
+<tr class="odd">
+<td align="right">5000</td>
+<td align="left">glm</td>
+<td align="right">0.706</td>
+<td align="right">0.533</td>
+<td align="right">0.533</td>
+</tr>
+<tr class="even">
+<td align="right">5000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">0.600</td>
+<td align="right">0.546</td>
+<td align="right">0.546</td>
+</tr>
+</tbody>
+</table>
+<p>Now a simulation study is made where males with heart diseases Heart
+Failure and Atrial Fibrillation have a response probability of <span class="math inline">\(30\%\)</span>, males with Ischemic Heart Disease
+and Valvular Heart Disease have a response probability of <span class="math inline">\(70\%\)</span>, whilst females have the same
+difference accors heart diseases but have a response probability that is
+<span class="math inline">\(15\%\)</span> higher.</p>
+<pre class="r"><code>p &lt;- c(rep(0.3,5),
+rep(0.7,5),
+rep(0.7,5),
+rep(0.3,5),
+rep(0.3+0.15,5),
+rep(0.7+0.15,5),
+rep(0.7+0.15,5),
+rep(0.3+0.15,5))
+
+knitr::kable(rbind(
+representativity_simulation(n=1000,mod=&quot;glm&quot;,p=p),
+representativity_simulation(n=1000,mod=&quot;cv.glmnet&quot;,p=p),
+representativity_simulation(n=10000,mod=&quot;glm&quot;,p=p),
+representativity_simulation(n=10000,mod=&quot;cv.glmnet&quot;,p=p)),caption=&quot;p(male,(HF,AF))=0.3, p(male,(IHD,VHD))=0.7, p(female,(HF,AF))=0.45, p(female,(IHD,VHD))=0.85,&quot;,format=&quot;markdown&quot;)</code></pre>
+<table>
+<caption>p(male,(HF,AF))=0.3, p(male,(IHD,VHD))=0.7,
+p(female,(HF,AF))=0.45, p(female,(IHD,VHD))=0.85,</caption>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="left">Model</th>
+<th align="right">V_d</th>
+<th align="right">R_tilde</th>
+<th align="right">R_hat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1000</td>
+<td align="left">glm</td>
+<td align="right">0.686</td>
+<td align="right">0.547</td>
+<td align="right">0.547</td>
+</tr>
+<tr class="even">
+<td align="right">1000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">0.823</td>
+<td align="right">0.597</td>
+<td align="right">0.597</td>
+</tr>
+<tr class="odd">
+<td align="right">10000</td>
+<td align="left">glm</td>
+<td align="right">0.749</td>
+<td align="right">0.588</td>
+<td align="right">0.588</td>
+</tr>
+<tr class="even">
+<td align="right">10000</td>
+<td align="left">cv.glmnet</td>
+<td align="right">0.778</td>
+<td align="right">0.573</td>
+<td align="right">0.573</td>
+</tr>
+</tbody>
+</table>
+</details>
+</details>
 
 
 
