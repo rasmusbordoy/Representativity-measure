@@ -1,5 +1,14 @@
-
+n <- 5000
+mod <- "cv.glmnet"
+mod <- "glm"
+p <- c(rep(0.1,20),rep(0.9,20))
+p <- c(rep(0.2,40))
+library(fastDummies)
+library(data.table)
+library(tidyverse)
+library(glmnet)
 representativity_simulation <- function(n,mod,p){
+
 men <- matrix(NA,nrow=6,ncol=6)
 men[1,] <- c("","Education","","","","")
 men[,1] <- c("","Heart Disease","HF","IHD","VHD","AF")
@@ -292,22 +301,44 @@ df$COV[which(apply(df[,c("Female","AF","Secondary education")],1,FUN=function(x)
 df$COV[which(apply(df[,c("Female","AF","Tertiary education")],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] <- paste(c("Female","AF","Tertiary education") ,collapse="_")
 df$COV[which(apply(df[,c("Female","AF","Unknown education")],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] <- paste(c("Female","AF","Unknown education"),collapse="_")
 
-#mod <- "glm"
+#rm(df_sim)
+
+
+
+#Find which penalty is chosen in the case of an intercept only model, and use this penalty in the model fitting
 if(mod == "glm"){m <- glm(Response~COV,data=df,family="binomial")}
-if(mod == "cv.glmnet"){m <- cv.glmnet(y=df$Response,x=as.matrix(df[,-c("COV","Response")]),family="binomial",intercept=FALSE,type.measure = "deviance")}
+if(mod == "cv.glmnet"){
+  
+  lambda <- NA
+  df_sim <- copy(df)
+  for(i in 1:9){
+    
+    df_sim <- df_sim[,Response := rbinom(n=dim(df_sim)[1],size=1,prob=mean(df$Response))]
+    m_sim <- glmnet(y=df_sim$Response,x=as.matrix(dummy_cols(df_sim[,c("COV")])[,-1]),family="binomial",intercept=FALSE,type.measure = "deviance")
+    lambda[i] <- m_sim$lambda[max(which(m_sim$df == 0))]
+    
+  }
+  mod_mat <- as.matrix(dummy_cols(df[,c("COV")])[,-1])
+  m <- glmnet(y=df$Response,x=mod_mat,family="binomial",intercept=FALSE,type.measure = "deviance",lambda=mean(lambda))
+  }
+
+
 
 
 if(mod == "cv.glmnet"){
-  sel_cov <- coef(m,s=m$lambda.1se)
+  sel_cov <- coef(m)
   sel_cov <- sel_cov[,1][-c(which(names(sel_cov[,1]) == "(Intercept)"))]
   sel_cov <- sel_cov[sel_cov!= 0]
   sel_cov_names <- names(sel_cov)
 }
 
-if(class(m)[1] == "glm"){pred_mat <- data.frame(distinct(df[,c("COV")]))}
+if(mod== "glm"){pred_mat <- data.frame(distinct(df[,c("COV")]))}
+
+#This part fails in case of one covariate
+
 
 #Total variation distance
-if(class(m)[1] == "glm"){
+if(mod == "glm"){
   
   A <- matrix(predict(m,pred_mat,type="response"))
   
@@ -329,24 +360,33 @@ if(class(m)[1] == "glm"){
   }
   1-sum(a)*2/((G_s-1)*G_s) 
 }
-if(class(m)[1] == "cv.glmnet")
+
+if(mod == "cv.glmnet")
 {
-  if(length(sel_cov)>0){
-  pred_mat <- distinct(df[,..sel_cov_names])
-  temp_df <- copy(distinct(df[,-..sel_cov_names][,-c("COV","Response")]))
-  pred_mat <- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x <- 0})[1:nrow(pred_mat),])
-  pred_mat
-  col_ind_pred_mat <- match(colnames(distinct(df[,-c("COV","Response")])), colnames(pred_mat))
-  pred_mat <- as.matrix(pred_mat[,..col_ind_pred_mat])
+  #if(length(sel_cov) == 1)
+  # temp_pred_mat <- c(pred_mat,apply(temp_df,c(1,2),function(x){x <- 0})[1,])
+  # names(temp_pred_mat)[1] <- row.names(pred_mat)
+  # pred_mat <- temp_pred_mat
+  # pred_mat <- pred_mat[names(pred_mat)[match(colnames(mod_mat),names(pred_mat))]]
   
-  #A <- data.frame(COV=distinct(df[,-c("Response")])[,"COV"],P=predict(m,pred_mat,type="response"))
+  if(length(sel_cov)>1){
+  pred_mat <- as.matrix(mod_mat[1:length(sel_cov_names),sel_cov_names])
+  
+  diag(pred_mat) <- 1
+  temp_df <- mod_mat[,-which(colnames(mod_mat) %in% sel_cov_names)]
+  
+  pred_mat <- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x <- 0})[1:nrow(pred_mat),])
+  
+  pred_mat <- pred_mat[,colnames(pred_mat)[match(colnames(mod_mat),colnames(pred_mat))]]
+
   A <- matrix(predict(m,pred_mat,type="response"))
   
   colnames(A) <- "P"
   
   G_s <- dim(A)[1]
+  
   for(i in 1:(dim(A)[1]-1)){
-    if( i == 1){
+    if(i == 1){
       
       a <- abs(as.numeric(unlist(A[1])-unlist(A[-1])))
       #names(a) <- paste(unlist(A[1,1]),unlist(A[-1,1]),sep="+")
@@ -358,39 +398,51 @@ if(class(m)[1] == "cv.glmnet")
       A <- A[-1]
     }
   }
-  1-sum(a)*2/((G_s-1)*G_s) 
 }else{
   a <- 0
   G_s <- 2
 }}
 
 #R-indicator
-if(class(m)[1] == "glm"){
+if(mod == "glm"){
+  predict(m,data.frame(df[,c("COV")]),type="response")
+  
   df_R <- cbind(df,P=predict(m,data.frame(df[,c("COV")]),type="response"))
   beta <- m$coefficients
-  mod_mat <- model.matrix(m)
   lin_pred <- (model.matrix(m)) %*% beta
+  S_2 <- (sum(((df_R$P - mean(df_R$Response))^2))/n)
 }
 
-if(class(m)[1] == "cv.glmnet"){ 
-  df_R <- cbind(df,P=predict(m,as.matrix(df[,-c("COV","Response")]),type="response",s=m$lambda.min))
+if(mod == "cv.glmnet"){
+  
+  
+  df_R <- cbind(df,P=predict(m,mod_mat,type="response"))
+  
   colnames(df_R)[ncol(df_R)] <- "P"
-  beta <- coef(m,s=m$lambda.min)
-  mod_mat <- as.matrix(df[,-c("COV","Response")])
+  beta <- coef(m)
+  x <- mod_mat
   beta <- beta[,1][-c(which(names(beta[,1]) == "(Intercept)"))]
-  }
+  
+  
+  S_2 <- ifelse(length(sel_cov)>1,(sum(((df_R$P - mean(df_R$Response))^2))/n),1)
+}
 
-denom <- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
 
-S_2 <- (sum(((df_R$P - mean(df_R$Response))^2))/n)
+
+#denom <- solve(sum(apply(x,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
+
+
+
+
 data.frame(n=n,
   Model=paste(mod),
   V_d=1-sum(a)*2/((G_s-1)*G_s),
-  R_tilde=1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),
-  R_hat=1-2*sqrt(S_2))
+  R_hat=ifelse(S_2==1,1,1-2*sqrt(S_2)))
+
 
 
 }
+
 m <- glm(Response~COV,data=df,family="binomial")
 m <- cv.glmnet(y=df$Response,x=as.matrix(df[,-c("COV","Response")]),family="binomial",intercept=FALSE,type.measure = "class")
 
@@ -398,3 +450,10 @@ rbind(representativity_simulation(n=800,mod="glm",p=rep(0.5,40)),
 representativity_simulation(n=800,mod="cv.glmnet",p=rep(0.2,40)),
 representativity_simulation(n=5000,mod="glm",p=rep(0.5,40)),
 representativity_simulation(n=5000,mod="cv.glmnet",p=rep(0.2,40)))
+
+representativity_simulation(n=5000,mod="glm",p=rep(0.2,40))
+
+representativity_simulation(n=5000,mod="cv.glmnet",p=rep(0.2,40))
+representativity_simulation(n=5000,mod="cv.glmnet",p=c(rep(0.2,10),rep(0.8,30)))
+
+representativity_simulation(n=5000,mod="cv.glmnet",p=c(rep(0.2,30),rep(0.8,10)))

@@ -13,6 +13,7 @@ output:
 library(data.table)
 library(tidyverse)
 library(glmnet)
+library(fastDummies)
 ```
 
 
@@ -22,9 +23,13 @@ library(glmnet)
 </summary>
 <br>
 
+
+#Section 1 - Defining Variation Distance for Survey Response
+
+
 <details>
 <summary>
-<font size= "3"> **Section 1 - Defining Variation Distance for Survey Response** </font>
+<font size= "3"> **Section 1 - Defining Categorical Variation Distance for Survey Response** </font>
 </summary>
 <br>
 This section has of now only applicability to discrete factor covariates with no specific ordering. It will be of interest to extend the theory to include numerical covariates.
@@ -85,9 +90,67 @@ The behaviour of the above definition of a total variation distance will be exam
 
 </details>
 
+#Section 2 - Defining Variation Distance for Survey Response
 <details>
 <summary>
-<font size= "3"> **Section 2 - Defining R-indicators for Survey Response** </font>
+<font size= "3"> **Section 2 - Defining Ordinal Variation Distance for Survey Response** </font>
+</summary>
+<br>
+
+
+If a categorical covariate can be translated into an ordinal covariate or a discrete one, where the assigned values are integers, then the variation distance can be calculated in a different manner than for categorical groups. When looping through, or summing through, a categorical covariate, then all permutations/interactions (saturated model) were of interest, but when a certain order exists in a covariate, then a different method of measuring distance is available, and should be used.
+
+
+If a ordered covariate has values $$ s \in \left\{ 0,1,2, \ldots , t \right\} := \bar{T}, $$ then it is of interest to measure distances where the domain $\bar{T}$ is split up into subsets following a specific order. If $\bar{T} = \{1,2,3\}$, then the subsets of $\bar{T}$ are
+$$
+\begin{array}{l}
+\{\{1\},\{2\},\{3\}\}, \\
+\{\{1\},\{2,3\}\},\\
+\{\{1,2\},\{3\}\}.
+\end{array}
+$$
+This is different than usual permutations since the sets $\{\{2\},\{1,3\}\}$ and $\{\{\emptyset\},\{1,2,3\}\}$ don't occur, and the reason for this will be clear.
+
+Denote the set of all non-void combinations of an ordered covariate with index-elements in $\bar{T}$ as $\mathscr{T}$.
+
+Since the empty set is not considered, then there are $2^{t-1}-1$ elements in $\mathscr{T}$
+$$
+\# \mathscr{T} =\{ \text{No. of elements in }\mathscr{T} \} = 2^{t-1}-1.
+$$
+A way to find the number of combinations of elements with a chosen ordering is to consider the number of ways to set commas in between elements. Taking the same example as above, but writing 
+$\bar{T} = \{1,2,3\} = 123$, then the subsets can be found as setting commas as
+$$
+\begin{array}{l}
+1,23 \\
+1,2,3 \\
+12,3
+\end{array}
+$$
+showing that there are 3 possible subsets. Allowing $\bar{T}$ to be arbitrarily large, then the number of commas can be found using binomial coefficients. 
+
+The total number of group splits that are considered in $\mathscr{T}$ is
+$$
+\sum_{k=1}^{t-1} k {t -1 \choose k}.
+$$
+For each chosen element in $\mathscr{T}$, which all have between $2,\ldots , t-1$ group splits, then the maximum variation distance is sought for. The number of group splits for a chosen element $Z \in \mathscr{T}$ is denoted $\# Z$, and each group within the chosen element can be chosen as $z_i , i = 1,\ldots \# Z$. The variation distance is thus
+
+$$
+\sup_{Z \in \mathscr{T}} \sum_{i=1}^{\# Z } | P(\pi = 1 | X= z_i ) - P(\pi = 1 | X= z_{i-1} ) |.
+$$
+The representativity measure for integers/ordered categories thus becomes, since it must be between $\[0,1\]$
+$$
+R_{\text{Ordinal}} = 1 - \sup_{Z \in \mathscr{T}} \frac{1}{(\#Z)}\sum_{i=1}^{\# Z } | P(\pi = 1 | X= z_i ) - P(\pi = 1 | X= z_{i-1} ) |.
+$$
+
+</details>
+
+#Section 3 - Defining R-indicators for Survey Response
+
+
+
+<details>
+<summary>
+<font size= "3"> **Section 3 - Defining R-indicators for Survey Response** </font>
 </summary>
 <br>
 The paper "Estimation of an indicator of the representativeness of survey response" Shlomo, Skinner and Schouten (2012) is the backbone for results in the paper "Theoretical Properties of Partial Indicators for Representative Response" Shlomo and Schouten (2013). These papers, and more, are written by a group collaboration named the RISQ project (Representativity Indicators for Survey Quality).
@@ -118,158 +181,10 @@ propensities of different sample units given their values on a specified set of 
 variables. Response is said to be representative if all the response propensities in the
 sample are equal (and none are equal to zero)" Shlomo and Schouten (2013)
 
-$\textbf{Bias adjustment of R-indicator}$
-
-Shlomo and Schouten (2013) and Shlomo, Skinner and Schouten (2012) propose bias adjustments of the R-indicator due to the sample size dependent bias. It is stated that when sample size decreases, then the bias increases.
-
-The following measures are of relevance
-
-\begin{align}
-\bar{p}_U & = \frac{\sum_{i \in U} p_i}{N}, \\
-\hat{\bar{p}}_U & = \frac{\sum_{i \in s} \omega_i \hat{p}_i}{N}, \\
-\hat{p}_i & = g^{-1}(x_i^T \hat{\beta}) \,\, \, \text{where } g \text{ is the link function,} \\
-\bar{p}_s & = \frac{\sum_{i \in s} \omega_i p_i}{N} .
-\end{align}
-
-A decomposition of $\hat{S}_p$ is presented. First $\hat{p}_i - \hat{\bar{p}_U}$ is rewritten by adding zero
-
-
-\begin{align}
-\hat{p}_i - \hat{\bar{p}_U} &= (\hat{p}_i - p_i) + (p_i-\bar{p}_U) + (\bar{p}_U - \bar{p}_s)+(\bar{p}_s - \hat{\bar{p}}_U).
-\end{align}
-
-A distinction is made between taking expectation to the sampling mechanism and response mechanism. When speaking of $p_i$ (not $\hat{p}_i$) the expectation is with respect to the response mechanism, i.e. $p_i = E_r(\pi_i | x_i)$. When taking expectations with respect to the sampling mechanism (the design) it is denoted by $E_s(\cdot)$.
-
-We will use that
-
-\begin{align}
-E_r(\hat{p}_i)  &\approx p_i, \\
-E_r(\hat{\bar{p}}_U) & \approx \bar{p}_s,
-\end{align}
-
-in order to obtain
-
-
-\begin{align}
-
-E_r\left[ \left( \hat{p}_i - \hat{\bar{p}}_U
-\right)^2
-\right] &= 
-E_r\left[ \left((\hat{p}_i - p_i) + (p_i-\bar{p}_U) + (\bar{p}_U - \bar{p}_s)+(\bar{p}_s - \hat{\bar{p}}_U)\right)^2
-\right] \\
-&=
-E_r\left[ (\hat{p}_i - p_i)^2 + (p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2+(\bar{p}_s - \hat{\bar{p}}_U)^2\right]
-+ 2E_r(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i - \bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
-& \qquad \qquad \qquad + \underset{=0}{\underbrace{2 E_r(\hat{p}_i - p_i)(p_i - \bar{p}_U) + 2 E_r(\hat{p}_i-p_i)(\bar{p}_U - \bar{p}_s) + 2 E_r(p_i - \bar{p}_U)(\bar{p}_s - \hat{\bar{p}}_U) + 2 E_r(\bar{p}_U - \bar{p}_s)(\bar{p}_s-\hat{\bar{p}}_U)}} \\
-&= E_r\left[ (\hat{p}_i - p_i)^2\right] +E_r\left[ (\bar{p}_s - \hat{\bar{p}}_U)^2\right] + (p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2 \\
-& \qquad \qquad + 2E_r(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i - \bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
-&= 
-Var_r(\hat{p}_i) + Var_r(\hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2\\
-&  \qquad \qquad  - 2 Cov_r(\hat{p}_i,\hat{\bar{p}}_U)-2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) \\
-
-&= Var_r(\hat{p}_i - \hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2 - 2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) .
-\end{align}
-
-
-This leads to the following approximation for 
-$E_r(\hat{S}_p^2)$:
-
-\begin{align}
-E_r(\hat{S}_p^2) & \approx \frac{1}{N-1} \sum_{i \in s} \omega_i \left\{
-Var_r(\hat{p}_i - \hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U - \bar{p}_s)^2 - 2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) 
-\right\} \\
-&=
-\frac{1}{N-1} \sum_{i \in s} \omega_i 
-Var_r(\hat{p}_i - \hat{\bar{p}}_U) + \frac{1}{N-1} \sum_{i \in s} \omega_i  (p_i-\bar{p}_U)^2 \\
-& \qquad \qquad
-+\frac{N_{s}}{N-1}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)  \underset{\approx N\bar{p}_s - N_s \bar{p}_U}{\underbrace{\frac{\sum_{i \in s} \omega_i(p_i - \bar{p}_U)}{N-1}}}
-\\
-&
-
-\approx 
-\frac{1}{N-1}\left\{ 
-\sum_{i \in s} \omega_i 
-Var_r(\hat{p}_i - \hat{\bar{p}}_U) + \sum_{i \in s} \omega_i  (p_i-\bar{p}_U)^2
-
- +N_{s}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)(N\bar{p}_s - N_s \bar{p}_U)
-\right\},
-
-\end{align}
-
-
-where $N_s = \sum_{i \in s} \omega_i$.
-
-Taking expectation with respect to the sampling design  gives
-
-\begin{align}
-E_s E_r(\hat{S}_p^2) = S^2_P + A_1 +A_2,
-\end{align}
-
-where 
-
-\begin{align}
-A_1 &= E_s \left[
-\frac{1}{N-1} \sum_{i \in s} \omega_i 
-Var_r(\hat{p}_i - \hat{\bar{p}}_U)
-\right], \\
-A_2 &=
-E_s \left[ \frac{1}{N-1} \left\{
-N_{s}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)(N\bar{p}_s - N_s \bar{p}_U)
-\right\}
-
-\right].
-\end{align}
-
-$A_1$ is asymptotically equivalent to
-$$
-\lambda_1 = E_s \left[N^{-1}
-\sum_{i \in s} \omega_i Var_r(\hat{p}_i)
-\right].
-$$
-
-The term $A_2$ can be rewritten. Note
-$$
-N_{s}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)(N\bar{p}_s - N_s \bar{p}_U) = (N_{s}-2N)(\bar{p}_U - \bar{p}_s)^2 -2(N-N_s)  (\bar{p}_s - \bar{p}_U)\bar{p}_U.
-$$
-
-
-Asymptotically $A_2$ is equivalent to, when ignoring terms of lower order,
-$$
-\begin{align}
-\lambda_2 & \approx - E_s \{ (\bar{p}_s - \bar{p}_U)^2\} + 2 \bar{p}_U E_s \{ (N^{-1} N_s -1)(\bar{p}_s - \bar{p}_U) \} \\
-&= - Var_s ( \bar{p}_s) + 2 \bar{p}_U N^{-1} Cov_s (N_s , \bar{p}_s).
-\end{align}
-$$
-
-This leads to the bias-adjusted R-indicator
-
-$$
-\tilde{S}_p^2 = \hat{S}^2_p - \hat{\lambda}_1-\hat{\lambda}_2,
-$$
-
-where $\hat{\lambda}_1$ and $\hat{\lambda}_2$ are estimators of $\lambda_1$ and $\lambda_2$ respectively. $\hat{\lambda_1}$ is
-$$
-\hat{\lambda_1} = \frac{1}{N} \sum_{i \in s} \omega_i \hat{V}_r(\hat{p}_i),
-$$
-where $\hat{V}_r(\hat{p}_i)$ is an estimator of ${Var}_r(\hat{p}_i)$. In the case of constant weights $\omega_i = N/n$, then $\hat{\lambda_1}$ is, according to Shlomo, Skinner and Schouten (2012)
-$$
-\hat{\lambda_1} = \frac{1}{n} \sum_{i \in s} \nabla h(\bf{x}_i^T \hat{\beta})^2 \bf{x}_i^T\left[ \sum_{ j \in s}
-\nabla h(\bf{x}_j^T \hat{\beta})\bf{x}_j\bf{x}_j^T\right]^{-1}\bf{x}_i^T,
-$$
-
-where $\nabla h(\bf{x}_i^T \hat{\beta}) = \exp(\bf{x}_i^T\hat{\beta})/(1+\exp(\bf{x}_i^T\hat{\beta}))^2$, and $h$ being the link (inverse ??) function.
-
-In terms of constant weights, the term $N_s$ is constant, then according to Shlomo, Skinner and Schouten (2012) $\hat{\lambda}_2$ becomes
-$$
-\hat{\lambda}_2 = -(n^{-1} - N^{-1})S_p^2.
-$$
-All in all this leads to the bias adjusted estimator of $S_p^2$ becoming
-$$
-\tilde{S}^2_p = \hat{S}^2_p - \hat{\lambda}_1- \hat{\lambda}_2 = (1+n^{-1} - N^{-1})\hat{S}_p^2 -  \frac{1}{n} \sum_{i \in s} \nabla h(\bf{x}_i^T \hat{\beta})^2 \bf{x}_i^T\left[ \sum_{ j \in s}
-\nabla h(\bf{x}_j^T \hat{\beta})\bf{x}_j\bf{x}_j^T\right]^{-1}\bf{x}_i^T.
-$$
 </details>
 </details>
+
+
 
 <details>
 <summary>
@@ -277,11 +192,17 @@ $$
 </summary>
 <br>
 
+
+
+
+
 <details>
 <summary>
 <font size= "3"> **Generating data** </font>
 </summary>
 <br>
+
+#Generating data
 
 Using the distribution of the covariates from the data Life With a Heart Disease from 2020 by the Danish Heart Foundation, the distribution in terms of percentages looks as following when selecting the covariates Education, Heart Disease and Sex.
 
@@ -589,12 +510,17 @@ r,
 tail(A[order(A$`Response %`)])), format="markdown")
 ```
 
+
+
+
 </details>
 <details>
 <summary>
 <font size= "3"> **Representativity results** </font>
 </summary>
 <br>
+
+#Representativity results
 
 For the analysis of the representativity, the following measures will be computed:
 \begin{align}
@@ -614,13 +540,14 @@ if(mod == "glm"){m <- glm(Response~COV,data=df,family="binomial")}
 if(mod == "cv.glmnet"){m <- cv.glmnet(y=df$Response,x=as.matrix(df[,-c("COV","Response")]),family="binomial",intercept=FALSE,type.measure = "deviance")}
 ```
 
-No fitted response probabilities are $0$.
+No fitted response probabilities from the GLM are $0$.
+
 ```{r}
 options(scipen=999)
 print(c("Minimum response probability"=min(fitted(m))))
 ```
 
-This means that $V_D = \tilde{V}_D$.
+
 ```{r,message = FALSE}
 if(class(m)[1] == "glm"){pred_mat <- data.frame(distinct(df[,c("COV")]))}
 if(class(m)[1] == "cv.glmnet"){pred_mat <- as.matrix(distinct(df[,-c("COV","Response")]))}
@@ -661,10 +588,7 @@ if(class(m)[1] == "cv.glmnet"){
 denom <- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
 
 S_2 <- (sum(((df_R$P - mean(df_R$Response))^2))/n)
-data.frame(Model=paste(mod),
-  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
-  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
-  R_hat=round(1-2*sqrt(S_2),3))
+
 ```
 
 In the setting with $n=1000$ and all response probabilities equal to $0.5$ and using GLM's, the representativity measures become:
@@ -672,29 +596,47 @@ In the setting with $n=1000$ and all response probabilities equal to $0.5$ and u
 ```{r}
 knitr::kable(data.frame(Model=paste(mod),
   V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
-  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
   R_hat=round(1-2*sqrt(S_2),3)), caption="p=0.5",format="markdown")
 ```
 
-The Lasso model makes subset selection, so the measure $V_d$ is calculated only for the groups which have non-zero coefficients.
+
+The Lasso model makes subset selection, so the measure $V_d$ is calculated only for the groups which have non-zero coefficients. In a setting with all true response probabilities being equal, then the representativity measure ought to be $100\%$. This is not the case for the GLM model, and it is problematic. Whether or not the Lasso sets coefficients to zero or not (if not, then there is overfitting since it is in theory an intercept model), depends on the $\lambda$ tuning parameter, that is, how much penalization is added to the model fitting.
 
 ```{r}
 mod <- "cv.glmnet"
 if(mod == "glm"){m <- glm(Response~COV,data=df,family="binomial")}
-if(mod == "cv.glmnet"){m <- cv.glmnet(y=df$Response,x=as.matrix(df[,-c("COV","Response")]),family="binomial",intercept=FALSE,type.measure = "deviance")}
+if(mod == "cv.glmnet"){
+  
+  lambda <- NA
+  df_sim <- copy(df)
+  for(i in 1:9){
+    
+    df_sim <- df_sim[,Response := rbinom(n=dim(df_sim)[1],size=1,prob=mean(df$Response))]
+    m_sim <- glmnet(y=df_sim$Response,x=as.matrix(dummy_cols(df_sim[,c("COV")])[,-1]),family="binomial",intercept=FALSE,type.measure = "deviance")
+    lambda[i] <- m_sim$lambda[max(which(m_sim$df == 0))]
+    
+  }
+  mod_mat <- as.matrix(dummy_cols(df[,c("COV")])[,-1])
+  m <- glmnet(y=df$Response,x=mod_mat,family="binomial",intercept=FALSE,type.measure = "deviance",lambda=mean(lambda))
+  }
+
+
 
 
 if(mod == "cv.glmnet"){
-  sel_cov <- coef(m,s=m$lambda.1se)
+  sel_cov <- coef(m)
   sel_cov <- sel_cov[,1][-c(which(names(sel_cov[,1]) == "(Intercept)"))]
   sel_cov <- sel_cov[sel_cov!= 0]
   sel_cov_names <- names(sel_cov)
 }
 
-if(class(m)[1] == "glm"){pred_mat <- data.frame(distinct(df[,c("COV")]))}
+if(mod== "glm"){pred_mat <- data.frame(distinct(df[,c("COV")]))}
+
+#This part fails in case of one covariate
+
 
 #Total variation distance
-if(class(m)[1] == "glm"){
+if(mod == "glm"){
   
   A <- matrix(predict(m,pred_mat,type="response"))
   
@@ -716,24 +658,33 @@ if(class(m)[1] == "glm"){
   }
   1-sum(a)*2/((G_s-1)*G_s) 
 }
-if(class(m)[1] == "cv.glmnet")
+
+if(mod == "cv.glmnet")
 {
-  if(length(sel_cov)>0){
-  pred_mat <- distinct(df[,..sel_cov_names])
-  temp_df <- copy(distinct(df[,-..sel_cov_names][,-c("COV","Response")]))
-  pred_mat <- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x <- 0})[1:nrow(pred_mat),])
-  pred_mat
-  col_ind_pred_mat <- match(colnames(distinct(df[,-c("COV","Response")])), colnames(pred_mat))
-  pred_mat <- as.matrix(pred_mat[,..col_ind_pred_mat])
+  #if(length(sel_cov) == 1)
+  # temp_pred_mat <- c(pred_mat,apply(temp_df,c(1,2),function(x){x <- 0})[1,])
+  # names(temp_pred_mat)[1] <- row.names(pred_mat)
+  # pred_mat <- temp_pred_mat
+  # pred_mat <- pred_mat[names(pred_mat)[match(colnames(mod_mat),names(pred_mat))]]
   
-  #A <- data.frame(COV=distinct(df[,-c("Response")])[,"COV"],P=predict(m,pred_mat,type="response"))
+  if(length(sel_cov)>1){
+  pred_mat <- as.matrix(mod_mat[1:length(sel_cov_names),sel_cov_names])
+  
+  diag(pred_mat) <- 1
+  temp_df <- mod_mat[,-which(colnames(mod_mat) %in% sel_cov_names)]
+  
+  pred_mat <- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x <- 0})[1:nrow(pred_mat),])
+  
+  pred_mat <- pred_mat[,colnames(pred_mat)[match(colnames(mod_mat),colnames(pred_mat))]]
+
   A <- matrix(predict(m,pred_mat,type="response"))
   
   colnames(A) <- "P"
   
   G_s <- dim(A)[1]
+  
   for(i in 1:(dim(A)[1]-1)){
-    if( i == 1){
+    if(i == 1){
       
       a <- abs(as.numeric(unlist(A[1])-unlist(A[-1])))
       #names(a) <- paste(unlist(A[1,1]),unlist(A[-1,1]),sep="+")
@@ -745,35 +696,51 @@ if(class(m)[1] == "cv.glmnet")
       A <- A[-1]
     }
   }
-  1-sum(a)*2/((G_s-1)*G_s) 
 }else{
   a <- 0
   G_s <- 2
 }}
+
 #R-indicator
-if(class(m)[1] == "glm"){
+if(mod == "glm"){
+  predict(m,data.frame(df[,c("COV")]),type="response")
+  
   df_R <- cbind(df,P=predict(m,data.frame(df[,c("COV")]),type="response"))
   beta <- m$coefficients
-  mod_mat <- model.matrix(m)
   lin_pred <- (model.matrix(m)) %*% beta
+  S_2 <- (sum(((df_R$P - mean(df_R$Response))^2))/n)
 }
 
-if(class(m)[1] == "cv.glmnet"){ 
-  df_R <- cbind(df,P=predict(m,as.matrix(df[,-c("COV","Response")]),type="response",s=m$lambda.min))
+if(mod == "cv.glmnet"){
+  
+  
+  df_R <- cbind(df,P=predict(m,mod_mat,type="response"))
+  
   colnames(df_R)[ncol(df_R)] <- "P"
-  beta <- coef(m,s=m$lambda.min)
-  mod_mat <- as.matrix(df[,-c("COV","Response")])
+  beta <- coef(m)
+  x <- mod_mat
   beta <- beta[,1][-c(which(names(beta[,1]) == "(Intercept)"))]
+  
+  
+  S_2 <- ifelse(length(sel_cov)>1,(sum(((df_R$P - mean(df_R$Response))^2))/n),1)
 }
 
-denom <- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
 
-S_2 <- (sum(((df_R$P - mean(df_R$Response))^2))/n)
 
-knitr::kable(data.frame(Model=paste(mod),
-  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
-  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
-  R_hat=round(1-2*sqrt(S_2),3)), caption="p=0.5",format="markdown")
+#denom <- solve(sum(apply(x,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
+
+
+
+
+data.frame(n=n,
+  Model=paste(mod),
+  V_d=1-sum(a)*2/((G_s-1)*G_s),
+  R_hat=ifelse(S_2==1,1,1-2*sqrt(S_2)))
+
+knitr::kable(data.frame(n=n,
+  Model=paste(mod),
+  V_d=1-sum(a)*2/((G_s-1)*G_s),
+  R_hat=ifelse(S_2==1,1,1-2*sqrt(S_2))), caption="p=0.5",format="markdown")
 ```
 
 The Lasso can see that there is no need for coefficient apart from the intercept, and thus the representativity is $100\%$.
@@ -782,8 +749,8 @@ The Lasso can see that there is no need for coefficient apart from the intercept
 The tuning parameters in the above settings are: **sample size $n$, the 'true' response probabilities and also which model to use (GLM or Lasso)**. Creating a function from the above code lets us examine the representativity measures when changing the tuning parameters.
 
 ```{r}
-
 representativity_simulation <- function(n,mod,p){
+
 men <- matrix(NA,nrow=6,ncol=6)
 men[1,] <- c("","Education","","","","")
 men[,1] <- c("","Heart Disease","HF","IHD","VHD","AF")
@@ -973,8 +940,8 @@ df[(ind[39]+1):ind[40],c("Female","AF","Unknown education")] <- 1
 
 
 df$Response <- 0
-
-#p <- c(rep(0.9,20),rep(0.5,20))
+# 
+# p <- c(rep(0.5,20),rep(0.5,20))
 df[1:ind[1],"Response"] <- rbinom(ind[1],1,p[1]) #1
 df[(ind[1]+1):ind[2],"Response"] <- rbinom(ind[2]-ind[1],1,p[2]) #2
 df[(ind[2]+1):ind[3],"Response"] <- rbinom(ind[3]-ind[2],1,p[3]) #3
@@ -1076,22 +1043,44 @@ df$COV[which(apply(df[,c("Female","AF","Secondary education")],1,FUN=function(x)
 df$COV[which(apply(df[,c("Female","AF","Tertiary education")],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] <- paste(c("Female","AF","Tertiary education") ,collapse="_")
 df$COV[which(apply(df[,c("Female","AF","Unknown education")],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] <- paste(c("Female","AF","Unknown education"),collapse="_")
 
+#rm(df_sim)
 
+
+
+#Find which penalty is chosen in the case of an intercept only model, and use this penalty in the model fitting
 if(mod == "glm"){m <- glm(Response~COV,data=df,family="binomial")}
-if(mod == "cv.glmnet"){m <- cv.glmnet(y=df$Response,x=as.matrix(df[,-c("COV","Response")]),family="binomial",intercept=FALSE,type.measure = "deviance")}
+if(mod == "cv.glmnet"){
+  
+  lambda <- NA
+  df_sim <- copy(df)
+  for(i in 1:9){
+    
+    df_sim <- df_sim[,Response := rbinom(n=dim(df_sim)[1],size=1,prob=mean(df$Response))]
+    m_sim <- glmnet(y=df_sim$Response,x=as.matrix(dummy_cols(df_sim[,c("COV")])[,-1]),family="binomial",intercept=FALSE,type.measure = "deviance")
+    lambda[i] <- m_sim$lambda[max(which(m_sim$df == 0))]
+    
+  }
+  mod_mat <- as.matrix(dummy_cols(df[,c("COV")])[,-1])
+  m <- glmnet(y=df$Response,x=mod_mat,family="binomial",intercept=FALSE,type.measure = "deviance",lambda=mean(lambda))
+  }
+
+
 
 
 if(mod == "cv.glmnet"){
-  sel_cov <- coef(m,s=m$lambda.1se)
+  sel_cov <- coef(m)
   sel_cov <- sel_cov[,1][-c(which(names(sel_cov[,1]) == "(Intercept)"))]
   sel_cov <- sel_cov[sel_cov!= 0]
   sel_cov_names <- names(sel_cov)
 }
 
-if(class(m)[1] == "glm"){pred_mat <- data.frame(distinct(df[,c("COV")]))}
+if(mod== "glm"){pred_mat <- data.frame(distinct(df[,c("COV")]))}
+
+#This part fails in case of one covariate
+
 
 #Total variation distance
-if(class(m)[1] == "glm"){
+if(mod == "glm"){
   
   A <- matrix(predict(m,pred_mat,type="response"))
   
@@ -1113,24 +1102,33 @@ if(class(m)[1] == "glm"){
   }
   1-sum(a)*2/((G_s-1)*G_s) 
 }
-if(class(m)[1] == "cv.glmnet")
+
+if(mod == "cv.glmnet")
 {
-  if(length(sel_cov)>0){
-  pred_mat <- distinct(df[,..sel_cov_names])
-  temp_df <- copy(distinct(df[,-..sel_cov_names][,-c("COV","Response")]))
-  pred_mat <- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x <- 0})[1:nrow(pred_mat),])
-  pred_mat
-  col_ind_pred_mat <- match(colnames(distinct(df[,-c("COV","Response")])), colnames(pred_mat))
-  pred_mat <- as.matrix(pred_mat[,..col_ind_pred_mat])
+  #if(length(sel_cov) == 1)
+  # temp_pred_mat <- c(pred_mat,apply(temp_df,c(1,2),function(x){x <- 0})[1,])
+  # names(temp_pred_mat)[1] <- row.names(pred_mat)
+  # pred_mat <- temp_pred_mat
+  # pred_mat <- pred_mat[names(pred_mat)[match(colnames(mod_mat),names(pred_mat))]]
   
-  #A <- data.frame(COV=distinct(df[,-c("Response")])[,"COV"],P=predict(m,pred_mat,type="response"))
+  if(length(sel_cov)>1){
+  pred_mat <- as.matrix(mod_mat[1:length(sel_cov_names),sel_cov_names])
+  
+  diag(pred_mat) <- 1
+  temp_df <- mod_mat[,-which(colnames(mod_mat) %in% sel_cov_names)]
+  
+  pred_mat <- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x <- 0})[1:nrow(pred_mat),])
+  
+  pred_mat <- pred_mat[,colnames(pred_mat)[match(colnames(mod_mat),colnames(pred_mat))]]
+
   A <- matrix(predict(m,pred_mat,type="response"))
   
   colnames(A) <- "P"
   
   G_s <- dim(A)[1]
+  
   for(i in 1:(dim(A)[1]-1)){
-    if( i == 1){
+    if(i == 1){
       
       a <- abs(as.numeric(unlist(A[1])-unlist(A[-1])))
       #names(a) <- paste(unlist(A[1,1]),unlist(A[-1,1]),sep="+")
@@ -1142,38 +1140,46 @@ if(class(m)[1] == "cv.glmnet")
       A <- A[-1]
     }
   }
-  1-sum(a)*2/((G_s-1)*G_s) 
 }else{
   a <- 0
   G_s <- 2
 }}
 
 #R-indicator
-if(class(m)[1] == "glm"){
+if(mod == "glm"){
+  predict(m,data.frame(df[,c("COV")]),type="response")
+  
   df_R <- cbind(df,P=predict(m,data.frame(df[,c("COV")]),type="response"))
   beta <- m$coefficients
-  mod_mat <- model.matrix(m)
   lin_pred <- (model.matrix(m)) %*% beta
+  S_2 <- (sum(((df_R$P - mean(df_R$Response))^2))/n)
 }
 
-if(class(m)[1] == "cv.glmnet"){ 
-  df_R <- cbind(df,P=predict(m,as.matrix(df[,-c("COV","Response")]),type="response",s=m$lambda.min))
+if(mod == "cv.glmnet"){
+  
+  
+  df_R <- cbind(df,P=predict(m,mod_mat,type="response"))
+  
   colnames(df_R)[ncol(df_R)] <- "P"
-  beta <- coef(m,s=m$lambda.min)
-  mod_mat <- as.matrix(df[,-c("COV","Response")])
+  beta <- coef(m)
+  x <- mod_mat
   beta <- beta[,1][-c(which(names(beta[,1]) == "(Intercept)"))]
-  }
+  
+  
+  S_2 <- ifelse(length(sel_cov)>1,(sum(((df_R$P - mean(df_R$Response))^2))/n),1)
+}
 
-denom <- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
 
-S_2 <- (sum(((df_R$P - mean(df_R$Response))^2))/n)
+
+#denom <- solve(sum(apply(x,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
+
+
+
+
 data.frame(n=n,
   Model=paste(mod),
-  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
-  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
-  R_hat=round(1-2*sqrt(S_2),3))
-
-
+  V_d=1-sum(a)*2/((G_s-1)*G_s),
+  R_hat=ifelse(S_2==1,1,1-2*sqrt(S_2)))
 }
 ```
 

@@ -464,10 +464,11 @@ Sidsel Marie Bernt Jørgensen</h4>
 <font size="4"> <strong>Theoretical section</strong> </font>
 </summary>
 <p><br></p>
+<p>#Section 1 - Defining Variation Distance for Survey Response</p>
 <details>
 <summary>
-<font size="3"> <strong>Section 1 - Defining Variation Distance for
-Survey Response</strong> </font>
+<font size="3"> <strong>Section 1 - Defining Categorical Variation
+Distance for Survey Response</strong> </font>
 </summary>
 <p><br> This section has of now only applicability to discrete factor
 covariates with no specific ordering. It will be of interest to extend
@@ -543,9 +544,71 @@ will be examined in the section called “simulation study”. The next
 section presents another representativity measure using
 R-indicators.</p>
 </details>
+#Section 2 - Defining Variation Distance for Survey Response
 <details>
 <summary>
-<font size="3"> <strong>Section 2 - Defining R-indicators for Survey
+<font size="3"> <strong>Section 2 - Defining Ordinal Variation Distance
+for Survey Response</strong> </font>
+</summary>
+<p><br></p>
+<p>If a categorical covariate can be translated into an ordinal
+covariate or a discrete one, where the assigned values are integers,
+then the variation distance can be calculated in a different manner than
+for categorical groups. When looping through, or summing through, a
+categorical covariate, then all permutations/interactions (saturated
+model) were of interest, but when a certain order exists in a covariate,
+then a different method of measuring distance is available, and should
+be used.</p>
+<p>If a ordered covariate has values <span class="math display">\[ s \in
+\left\{ 0,1,2, \ldots , t \right\} := \bar{T}, \]</span> then it is of
+interest to measure distances where the domain <span class="math inline">\(\bar{T}\)</span> is split up into subsets
+following a specific order. If <span class="math inline">\(\bar{T} =
+\{1,2,3\}\)</span>, then the subsets of <span class="math inline">\(\bar{T}\)</span> are <span class="math display">\[
+\begin{array}{l}
+\{\{1\},\{2\},\{3\}\}, \\
+\{\{1\},\{2,3\}\},\\
+\{\{1,2\},\{3\}\}.
+\end{array}
+\]</span> This is different than usual permutations since the sets <span class="math inline">\(\{\{2\},\{1,3\}\}\)</span> and <span class="math inline">\(\{\{\emptyset\},\{1,2,3\}\}\)</span> don’t occur,
+and the reason for this will be clear.</p>
+<p>Denote the set of all non-void combinations of an ordered covariate
+with index-elements in <span class="math inline">\(\bar{T}\)</span> as
+<span class="math inline">\(\mathscr{T}\)</span>.</p>
+<p>Since the empty set is not considered, then there are <span class="math inline">\(2^{t-1}-1\)</span> elements in <span class="math inline">\(\mathscr{T}\)</span> <span class="math display">\[
+\# \mathscr{T} =\{ \text{No. of elements in }\mathscr{T} \} = 2^{t-1}-1.
+\]</span> A way to find the number of combinations of elements with a
+chosen ordering is to consider the number of ways to set commas in
+between elements. Taking the same example as above, but writing <span class="math inline">\(\bar{T} = \{1,2,3\} = 123\)</span>, then the
+subsets can be found as setting commas as <span class="math display">\[
+\begin{array}{l}
+1,23 \\
+1,2,3 \\
+12,3
+\end{array}
+\]</span> showing that there are 3 possible subsets. Allowing <span class="math inline">\(\bar{T}\)</span> to be arbitrarily large, then the
+number of commas can be found using binomial coefficients.</p>
+<p>The total number of group splits that are considered in <span class="math inline">\(\mathscr{T}\)</span> is <span class="math display">\[
+\sum_{k=1}^{t-1} k {t -1 \choose k}.
+\]</span> For each chosen element in <span class="math inline">\(\mathscr{T}\)</span>, which all have between <span class="math inline">\(2,\ldots , t-1\)</span> group splits, then the
+maximum variation distance is sought for. The number of group splits for
+a chosen element <span class="math inline">\(Z \in \mathscr{T}\)</span>
+is denoted <span class="math inline">\(\# Z\)</span>, and each group
+within the chosen element can be chosen as <span class="math inline">\(z_i , i = 1,\ldots \# Z\)</span>. The variation
+distance is thus</p>
+<p><span class="math display">\[
+\sup_{Z \in \mathscr{T}} \sum_{i=1}^{\# Z } | P(\pi = 1 | X= z_i ) -
+P(\pi = 1 | X= z_{i-1} ) |.
+\]</span> The representativity measure for integers/ordered categories
+thus becomes, since it must be between <span class="math inline">\(\[0,1\]\)</span> <span class="math display">\[
+R_{\text{Ordinal}} = 1 - \sup_{Z \in \mathscr{T}}
+\frac{1}{(\#Z)}\sum_{i=1}^{\# Z } | P(\pi = 1 | X= z_i ) - P(\pi = 1 |
+X= z_{i-1} ) |.
+\]</span></p>
+</details>
+<p>#Section 3 - Defining R-indicators for Survey Response</p>
+<details>
+<summary>
+<font size="3"> <strong>Section 3 - Defining R-indicators for Survey
 Response</strong> </font>
 </summary>
 <p><br> The paper “Estimation of an indicator of the representativeness
@@ -587,171 +650,6 @@ given their values on a specified set of auxiliary variables. Response
 is said to be representative if all the response propensities in the
 sample are equal (and none are equal to zero)” Shlomo and Schouten
 (2013)</p>
-<p><span class="math inline">\(\textbf{Bias adjustment of
-R-indicator}\)</span></p>
-<p>Shlomo and Schouten (2013) and Shlomo, Skinner and Schouten (2012)
-propose bias adjustments of the R-indicator due to the sample size
-dependent bias. It is stated that when sample size decreases, then the
-bias increases.</p>
-<p>The following measures are of relevance</p>
-<p><span class="math display">\[\begin{align}
-\bar{p}_U &amp; = \frac{\sum_{i \in U} p_i}{N}, \\
-\hat{\bar{p}}_U &amp; = \frac{\sum_{i \in s} \omega_i \hat{p}_i}{N}, \\
-\hat{p}_i &amp; = g^{-1}(x_i^T \hat{\beta}) \,\, \, \text{where } g
-\text{ is the link function,} \\
-\bar{p}_s &amp; = \frac{\sum_{i \in s} \omega_i p_i}{N} .
-\end{align}\]</span></p>
-<p>A decomposition of <span class="math inline">\(\hat{S}_p\)</span> is
-presented. First <span class="math inline">\(\hat{p}_i -
-\hat{\bar{p}_U}\)</span> is rewritten by adding zero</p>
-<p><span class="math display">\[\begin{align}
-\hat{p}_i - \hat{\bar{p}_U} &amp;= (\hat{p}_i - p_i) + (p_i-\bar{p}_U) +
-(\bar{p}_U - \bar{p}_s)+(\bar{p}_s - \hat{\bar{p}}_U).
-\end{align}\]</span></p>
-<p>A distinction is made between taking expectation to the sampling
-mechanism and response mechanism. When speaking of <span class="math inline">\(p_i\)</span> (not <span class="math inline">\(\hat{p}_i\)</span>) the expectation is with
-respect to the response mechanism, i.e. <span class="math inline">\(p_i
-= E_r(\pi_i | x_i)\)</span>. When taking expectations with respect to
-the sampling mechanism (the design) it is denoted by <span class="math inline">\(E_s(\cdot)\)</span>.</p>
-<p>We will use that</p>
-<p><span class="math display">\[\begin{align}
-E_r(\hat{p}_i)  &amp;\approx p_i, \\
-E_r(\hat{\bar{p}}_U) &amp; \approx \bar{p}_s,
-\end{align}\]</span></p>
-<p>in order to obtain</p>
-<p><span class="math display">\[\begin{align}
-
-E_r\left[ \left( \hat{p}_i - \hat{\bar{p}}_U
-\right)^2
-\right] &amp;=
-E_r\left[ \left((\hat{p}_i - p_i) + (p_i-\bar{p}_U) + (\bar{p}_U -
-\bar{p}_s)+(\bar{p}_s - \hat{\bar{p}}_U)\right)^2
-\right] \\
-&amp;=
-E_r\left[ (\hat{p}_i - p_i)^2 + (p_i-\bar{p}_U)^2 + (\bar{p}_U -
-\bar{p}_s)^2+(\bar{p}_s - \hat{\bar{p}}_U)^2\right]
-+ 2E_r(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i -
-\bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
-&amp; \qquad \qquad \qquad + \underset{=0}{\underbrace{2 E_r(\hat{p}_i -
-p_i)(p_i - \bar{p}_U) + 2 E_r(\hat{p}_i-p_i)(\bar{p}_U - \bar{p}_s) + 2
-E_r(p_i - \bar{p}_U)(\bar{p}_s - \hat{\bar{p}}_U) + 2 E_r(\bar{p}_U -
-\bar{p}_s)(\bar{p}_s-\hat{\bar{p}}_U)}} \\
-&amp;= E_r\left[ (\hat{p}_i - p_i)^2\right] +E_r\left[ (\bar{p}_s -
-\hat{\bar{p}}_U)^2\right] + (p_i-\bar{p}_U)^2 + (\bar{p}_U -
-\bar{p}_s)^2 \\
-&amp; \qquad \qquad + 2E_r(\hat{p}_i-p_i)(\bar{p}_s-\bar{p}_U) + 2(p_i -
-\bar{p}_U)(\bar{p}_U - \bar{p}_s) \\
-&amp;=
-Var_r(\hat{p}_i) + Var_r(\hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 +
-(\bar{p}_U - \bar{p}_s)^2\\
-&amp;  \qquad \qquad  - 2 Cov_r(\hat{p}_i,\hat{\bar{p}}_U)-2(p_i -
-\bar{p}_U)(\bar{p}_s - \bar{p}_U) \\
-
-&amp;= Var_r(\hat{p}_i - \hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 +
-(\bar{p}_U - \bar{p}_s)^2 - 2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U) .
-\end{align}\]</span></p>
-<p>This leads to the following approximation for <span class="math inline">\(E_r(\hat{S}_p^2)\)</span>:</p>
-<p><span class="math display">\[\begin{align}
-E_r(\hat{S}_p^2) &amp; \approx \frac{1}{N-1} \sum_{i \in s} \omega_i
-\left\{
-Var_r(\hat{p}_i - \hat{\bar{p}}_U) +(p_i-\bar{p}_U)^2 + (\bar{p}_U -
-\bar{p}_s)^2 - 2(p_i - \bar{p}_U)(\bar{p}_s - \bar{p}_U)
-\right\} \\
-&amp;=
-\frac{1}{N-1} \sum_{i \in s} \omega_i
-Var_r(\hat{p}_i - \hat{\bar{p}}_U) + \frac{1}{N-1} \sum_{i \in s}
-\omega_i  (p_i-\bar{p}_U)^2 \\
-&amp; \qquad \qquad
-+\frac{N_{s}}{N-1}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s -
-\bar{p}_U)  \underset{\approx N\bar{p}_s - N_s
-\bar{p}_U}{\underbrace{\frac{\sum_{i \in s} \omega_i(p_i -
-\bar{p}_U)}{N-1}}}
-\\
-&amp;
-
-\approx
-\frac{1}{N-1}\left\{
-\sum_{i \in s} \omega_i
-Var_r(\hat{p}_i - \hat{\bar{p}}_U) + \sum_{i \in s}
-\omega_i  (p_i-\bar{p}_U)^2
-
-+N_{s}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)(N\bar{p}_s -
-N_s \bar{p}_U)
-\right\},
-
-\end{align}\]</span></p>
-<p>where <span class="math inline">\(N_s = \sum_{i \in s}
-\omega_i\)</span>.</p>
-<p>Taking expectation with respect to the sampling design gives</p>
-<p><span class="math display">\[\begin{align}
-E_s E_r(\hat{S}_p^2) = S^2_P + A_1 +A_2,
-\end{align}\]</span></p>
-<p>where</p>
-<p><span class="math display">\[\begin{align}
-A_1 &amp;= E_s \left[
-\frac{1}{N-1} \sum_{i \in s} \omega_i
-Var_r(\hat{p}_i - \hat{\bar{p}}_U)
-\right], \\
-A_2 &amp;=
-E_s \left[ \frac{1}{N-1} \left\{
-N_{s}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)(N\bar{p}_s -
-N_s \bar{p}_U)
-\right\}
-
-\right].
-\end{align}\]</span></p>
-<p><span class="math inline">\(A_1\)</span> is asymptotically equivalent
-to <span class="math display">\[
-\lambda_1 = E_s \left[N^{-1}
-\sum_{i \in s} \omega_i Var_r(\hat{p}_i)
-\right].
-\]</span></p>
-<p>The term <span class="math inline">\(A_2\)</span> can be rewritten.
-Note <span class="math display">\[
-N_{s}(\bar{p}_U - \bar{p}_s)^2 -2 (\bar{p}_s - \bar{p}_U)(N\bar{p}_s -
-N_s \bar{p}_U) = (N_{s}-2N)(\bar{p}_U - \bar{p}_s)^2
--2(N-N_s)  (\bar{p}_s - \bar{p}_U)\bar{p}_U.
-\]</span></p>
-<p>Asymptotically <span class="math inline">\(A_2\)</span> is equivalent
-to, when ignoring terms of lower order, <span class="math display">\[
-\begin{align}
-\lambda_2 &amp; \approx - E_s \{ (\bar{p}_s - \bar{p}_U)^2\} + 2
-\bar{p}_U E_s \{ (N^{-1} N_s -1)(\bar{p}_s - \bar{p}_U) \} \\
-&amp;= - Var_s ( \bar{p}_s) + 2 \bar{p}_U N^{-1} Cov_s (N_s ,
-\bar{p}_s).
-\end{align}
-\]</span></p>
-<p>This leads to the bias-adjusted R-indicator</p>
-<p><span class="math display">\[
-\tilde{S}_p^2 = \hat{S}^2_p - \hat{\lambda}_1-\hat{\lambda}_2,
-\]</span></p>
-<p>where <span class="math inline">\(\hat{\lambda}_1\)</span> and <span class="math inline">\(\hat{\lambda}_2\)</span> are estimators of <span class="math inline">\(\lambda_1\)</span> and <span class="math inline">\(\lambda_2\)</span> respectively. <span class="math inline">\(\hat{\lambda_1}\)</span> is <span class="math display">\[
-\hat{\lambda_1} = \frac{1}{N} \sum_{i \in s} \omega_i
-\hat{V}_r(\hat{p}_i),
-\]</span> where <span class="math inline">\(\hat{V}_r(\hat{p}_i)\)</span> is an estimator of
-<span class="math inline">\({Var}_r(\hat{p}_i)\)</span>. In the case of
-constant weights <span class="math inline">\(\omega_i = N/n\)</span>,
-then <span class="math inline">\(\hat{\lambda_1}\)</span> is, according
-to Shlomo, Skinner and Schouten (2012) <span class="math display">\[
-\hat{\lambda_1} = \frac{1}{n} \sum_{i \in s} \nabla h(\bf{x}_i^T
-\hat{\beta})^2 \bf{x}_i^T\left[ \sum_{ j \in s}
-\nabla h(\bf{x}_j^T
-\hat{\beta})\bf{x}_j\bf{x}_j^T\right]^{-1}\bf{x}_i^T,
-\]</span></p>
-<p>where <span class="math inline">\(\nabla h(\bf{x}_i^T \hat{\beta}) =
-\exp(\bf{x}_i^T\hat{\beta})/(1+\exp(\bf{x}_i^T\hat{\beta}))^2\)</span>,
-and <span class="math inline">\(h\)</span> being the link (inverse ??)
-function.</p>
-In terms of constant weights, the term <span class="math inline">\(N_s\)</span> is constant, then according to
-Shlomo, Skinner and Schouten (2012) <span class="math inline">\(\hat{\lambda}_2\)</span> becomes <span class="math display">\[
-\hat{\lambda}_2 = -(n^{-1} - N^{-1})S_p^2.
-\]</span> All in all this leads to the bias adjusted estimator of <span class="math inline">\(S_p^2\)</span> becoming <span class="math display">\[
-\tilde{S}^2_p = \hat{S}^2_p - \hat{\lambda}_1- \hat{\lambda}_2 =
-(1+n^{-1} - N^{-1})\hat{S}_p^2 -  \frac{1}{n} \sum_{i \in s} \nabla
-h(\bf{x}_i^T \hat{\beta})^2 \bf{x}_i^T\left[ \sum_{ j \in s}
-\nabla h(\bf{x}_j^T
-\hat{\beta})\bf{x}_j\bf{x}_j^T\right]^{-1}\bf{x}_i^T.
-\]</span>
 </details>
 </details>
 <details>
@@ -764,6 +662,7 @@ h(\bf{x}_i^T \hat{\beta})^2 \bf{x}_i^T\left[ \sum_{ j \in s}
 <font size="3"> <strong>Generating data</strong> </font>
 </summary>
 <p><br></p>
+<p>#Generating data</p>
 <p>Using the distribution of the covariates from the data Life With a
 Heart Disease from 2020 by the Danish Heart Foundation, the distribution
 in terms of percentages looks as following when selecting the covariates
@@ -1258,7 +1157,7 @@ par(mfrow=c(1,3))
 barplot(p1,ylim=c(0,1),ylab=&quot;Response %&quot;)
 barplot(p2,ylim=c(0,1),ylab=&quot;Response %&quot;)
 barplot(p3,ylim=c(0,1),ylab=&quot;Response %&quot;)</code></pre>
-<p><img src="data:image/png;base64,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3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7Z+7JFl5v3YYCTRtJDAVqWEYYBdo7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" width="672" /></p>
+<p><img src="data:image/png;base64,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" width="672" /></p>
 <p>All the covariate combinations are then turned into a single
 covariate, and with <span class="math inline">\(3\)</span> groups with
 <span class="math inline">\(2, 4\)</span> and <span class="math inline">\(5\)</span> levels each leads to <span class="math inline">\(2\cdot 4 \cdot 5=40\)</span> groups in total.</p>
@@ -1322,13 +1221,13 @@ knitr::kable(df[sample(n,6),], format=&quot;markdown&quot;)</code></pre>
 <col width="2%" />
 <col width="2%" />
 <col width="1%" />
-<col width="9%" />
+<col width="10%" />
 <col width="14%" />
 <col width="12%" />
 <col width="11%" />
 <col width="11%" />
 <col width="5%" />
-<col width="19%" />
+<col width="18%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1349,64 +1248,64 @@ knitr::kable(df[sample(n,6),], format=&quot;markdown&quot;)</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="left">Male_AF_Basic education</td>
+<td align="left">Female_VHD_Basic education</td>
 </tr>
 <tr class="even">
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1</td>
-<td align="left">Female_HF_Basic education</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">Male_AF_Secondary education</td>
 </tr>
 <tr class="odd">
-<td align="right">0</td>
 <td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
+<td align="right">0</td>
 <td align="right">1</td>
-<td align="left">Female_IHD_Tertiary education</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">Male_IHD_Basic education</td>
 </tr>
 <tr class="even">
 <td align="right">0</td>
 <td align="right">1</td>
-<td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">Female_IHD_Secondary education</td>
+<td align="right">1</td>
+<td align="left">Female_HF_Unknown education</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
@@ -1424,19 +1323,19 @@ knitr::kable(df[sample(n,6),], format=&quot;markdown&quot;)</code></pre>
 <td align="left">Male_AF_Secondary education</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
-<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="left">Male_IHD_Tertiary education</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">Female_AF_Tertiary education</td>
 </tr>
 </tbody>
 </table>
@@ -1464,7 +1363,7 @@ tail(A[order(A$`Response %`)])), format=&quot;markdown&quot;)</code></pre>
 <td align="left">0</td>
 </tr>
 <tr class="even">
-<td align="left">Male_AF_Unknown education</td>
+<td align="left">Female_IHD_Postgraduate education</td>
 <td align="left">0</td>
 </tr>
 <tr class="odd">
@@ -1472,47 +1371,47 @@ tail(A[order(A$`Response %`)])), format=&quot;markdown&quot;)</code></pre>
 <td align="left">0</td>
 </tr>
 <tr class="even">
-<td align="left">Female_AF_Unknown education</td>
-<td align="left">0</td>
-</tr>
-<tr class="odd">
-<td align="left">Male_HF_Unknown education</td>
-<td align="left">25</td>
-</tr>
-<tr class="even">
 <td align="left">Male_IHD_Unknown education</td>
 <td align="left">28.6</td>
 </tr>
 <tr class="odd">
-<td align="left">…</td>
-<td align="left">…</td>
-</tr>
-<tr class="even">
-<td align="left">…</td>
-<td align="left">…</td>
-</tr>
-<tr class="odd">
-<td align="left">Male_IHD_Postgraduate education</td>
-<td align="left">57.9</td>
-</tr>
-<tr class="even">
-<td align="left">Male_HF_Tertiary education</td>
-<td align="left">58.3</td>
-</tr>
-<tr class="odd">
-<td align="left">Female_VHD_Tertiary education</td>
-<td align="left">62.5</td>
-</tr>
-<tr class="even">
-<td align="left">Female_HF_Basic education</td>
-<td align="left">64.7</td>
-</tr>
-<tr class="odd">
 <td align="left">Female_HF_Postgraduate education</td>
+<td align="left">33.3</td>
+</tr>
+<tr class="even">
+<td align="left">Male_IHD_Tertiary education</td>
+<td align="left">37.8</td>
+</tr>
+<tr class="odd">
+<td align="left">…</td>
+<td align="left">…</td>
+</tr>
+<tr class="even">
+<td align="left">…</td>
+<td align="left">…</td>
+</tr>
+<tr class="odd">
+<td align="left">Male_VHD_Tertiary education</td>
 <td align="left">66.7</td>
 </tr>
 <tr class="even">
+<td align="left">Female_AF_Postgraduate education</td>
+<td align="left">75</td>
+</tr>
+<tr class="odd">
+<td align="left">Male_AF_Postgraduate education</td>
+<td align="left">80</td>
+</tr>
+<tr class="even">
+<td align="left">Female_HF_Unknown education</td>
+<td align="left">100</td>
+</tr>
+<tr class="odd">
 <td align="left">Female_VHD_Postgraduate education</td>
+<td align="left">100</td>
+</tr>
+<tr class="even">
+<td align="left">Female_AF_Unknown education</td>
 <td align="left">100</td>
 </tr>
 </tbody>
@@ -1523,6 +1422,7 @@ tail(A[order(A$`Response %`)])), format=&quot;markdown&quot;)</code></pre>
 <font size="3"> <strong>Representativity results</strong> </font>
 </summary>
 <p><br></p>
+<p>#Representativity results</p>
 <p>For the analysis of the representativity, the following measures will
 be computed: <span class="math display">\[\begin{align}
 V_D &amp; =1- \frac{2}{(G-1) \times G} \sum_{l=k+1}^G \sum_{k=1}^G
@@ -1546,13 +1446,11 @@ covariate combinations.</p>
 <pre class="r"><code>mod &lt;- &quot;glm&quot;
 if(mod == &quot;glm&quot;){m &lt;- glm(Response~COV,data=df,family=&quot;binomial&quot;)}
 if(mod == &quot;cv.glmnet&quot;){m &lt;- cv.glmnet(y=df$Response,x=as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;)}</code></pre>
-<p>No fitted response probabilities are <span class="math inline">\(0\)</span>.</p>
+<p>No fitted response probabilities from the GLM are <span class="math inline">\(0\)</span>.</p>
 <pre class="r"><code>options(scipen=999)
 print(c(&quot;Minimum response probability&quot;=min(fitted(m))))</code></pre>
 <pre><code>## Minimum response probability 
 ##              0.0000004721032</code></pre>
-<p>This means that <span class="math inline">\(V_D =
-\tilde{V}_D\)</span>.</p>
 <pre class="r"><code>if(class(m)[1] == &quot;glm&quot;){pred_mat &lt;- data.frame(distinct(df[,c(&quot;COV&quot;)]))}
 if(class(m)[1] == &quot;cv.glmnet&quot;){pred_mat &lt;- as.matrix(distinct(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]))}
 #Total variation distance
@@ -1591,19 +1489,12 @@ if(class(m)[1] == &quot;cv.glmnet&quot;){
 
 denom &lt;- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
 
-S_2 &lt;- (sum(((df_R$P - mean(df_R$Response))^2))/n)
-data.frame(Model=paste(mod),
-  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
-  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
-  R_hat=round(1-2*sqrt(S_2),3))</code></pre>
-<pre><code>##   Model   V_d R_tilde R_hat
-## 1   glm 0.805   0.843 0.841</code></pre>
+S_2 &lt;- (sum(((df_R$P - mean(df_R$Response))^2))/n)</code></pre>
 <p>In the setting with <span class="math inline">\(n=1000\)</span> and
 all response probabilities equal to <span class="math inline">\(0.5\)</span> and using GLM’s, the representativity
 measures become:</p>
 <pre class="r"><code>knitr::kable(data.frame(Model=paste(mod),
   V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
-  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
   R_hat=round(1-2*sqrt(S_2),3)), caption=&quot;p=0.5&quot;,format=&quot;markdown&quot;)</code></pre>
 <table>
 <caption>p=0.5</caption>
@@ -1611,37 +1502,59 @@ measures become:</p>
 <tr class="header">
 <th align="left">Model</th>
 <th align="right">V_d</th>
-<th align="right">R_tilde</th>
 <th align="right">R_hat</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left">glm</td>
-<td align="right">0.805</td>
-<td align="right">0.843</td>
-<td align="right">0.841</td>
+<td align="right">0.77</td>
+<td align="right">0.817</td>
 </tr>
 </tbody>
 </table>
 <p>The Lasso model makes subset selection, so the measure <span class="math inline">\(V_d\)</span> is calculated only for the groups
-which have non-zero coefficients.</p>
+which have non-zero coefficients. In a setting with all true response
+probabilities being equal, then the representativity measure ought to be
+<span class="math inline">\(100\%\)</span>. This is not the case for the
+GLM model, and it is problematic. Whether or not the Lasso sets
+coefficients to zero or not (if not, then there is overfitting since it
+is in theory an intercept model), depends on the <span class="math inline">\(\lambda\)</span> tuning parameter, that is, how
+much penalization is added to the model fitting.</p>
 <pre class="r"><code>mod &lt;- &quot;cv.glmnet&quot;
 if(mod == &quot;glm&quot;){m &lt;- glm(Response~COV,data=df,family=&quot;binomial&quot;)}
-if(mod == &quot;cv.glmnet&quot;){m &lt;- cv.glmnet(y=df$Response,x=as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;)}
+if(mod == &quot;cv.glmnet&quot;){
+  
+  lambda &lt;- NA
+  df_sim &lt;- copy(df)
+  for(i in 1:9){
+    
+    df_sim &lt;- df_sim[,Response := rbinom(n=dim(df_sim)[1],size=1,prob=mean(df$Response))]
+    m_sim &lt;- glmnet(y=df_sim$Response,x=as.matrix(dummy_cols(df_sim[,c(&quot;COV&quot;)])[,-1]),family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;)
+    lambda[i] &lt;- m_sim$lambda[max(which(m_sim$df == 0))]
+    
+  }
+  mod_mat &lt;- as.matrix(dummy_cols(df[,c(&quot;COV&quot;)])[,-1])
+  m &lt;- glmnet(y=df$Response,x=mod_mat,family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;,lambda=mean(lambda))
+  }
+
+
 
 
 if(mod == &quot;cv.glmnet&quot;){
-  sel_cov &lt;- coef(m,s=m$lambda.1se)
+  sel_cov &lt;- coef(m)
   sel_cov &lt;- sel_cov[,1][-c(which(names(sel_cov[,1]) == &quot;(Intercept)&quot;))]
   sel_cov &lt;- sel_cov[sel_cov!= 0]
   sel_cov_names &lt;- names(sel_cov)
 }
 
-if(class(m)[1] == &quot;glm&quot;){pred_mat &lt;- data.frame(distinct(df[,c(&quot;COV&quot;)]))}
+if(mod== &quot;glm&quot;){pred_mat &lt;- data.frame(distinct(df[,c(&quot;COV&quot;)]))}
+
+#This part fails in case of one covariate
+
 
 #Total variation distance
-if(class(m)[1] == &quot;glm&quot;){
+if(mod == &quot;glm&quot;){
   
   A &lt;- matrix(predict(m,pred_mat,type=&quot;response&quot;))
   
@@ -1663,24 +1576,33 @@ if(class(m)[1] == &quot;glm&quot;){
   }
   1-sum(a)*2/((G_s-1)*G_s) 
 }
-if(class(m)[1] == &quot;cv.glmnet&quot;)
+
+if(mod == &quot;cv.glmnet&quot;)
 {
-  if(length(sel_cov)&gt;0){
-  pred_mat &lt;- distinct(df[,..sel_cov_names])
-  temp_df &lt;- copy(distinct(df[,-..sel_cov_names][,-c(&quot;COV&quot;,&quot;Response&quot;)]))
-  pred_mat &lt;- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x &lt;- 0})[1:nrow(pred_mat),])
-  pred_mat
-  col_ind_pred_mat &lt;- match(colnames(distinct(df[,-c(&quot;COV&quot;,&quot;Response&quot;)])), colnames(pred_mat))
-  pred_mat &lt;- as.matrix(pred_mat[,..col_ind_pred_mat])
+  #if(length(sel_cov) == 1)
+  # temp_pred_mat &lt;- c(pred_mat,apply(temp_df,c(1,2),function(x){x &lt;- 0})[1,])
+  # names(temp_pred_mat)[1] &lt;- row.names(pred_mat)
+  # pred_mat &lt;- temp_pred_mat
+  # pred_mat &lt;- pred_mat[names(pred_mat)[match(colnames(mod_mat),names(pred_mat))]]
   
-  #A &lt;- data.frame(COV=distinct(df[,-c(&quot;Response&quot;)])[,&quot;COV&quot;],P=predict(m,pred_mat,type=&quot;response&quot;))
+  if(length(sel_cov)&gt;1){
+  pred_mat &lt;- as.matrix(mod_mat[1:length(sel_cov_names),sel_cov_names])
+  
+  diag(pred_mat) &lt;- 1
+  temp_df &lt;- mod_mat[,-which(colnames(mod_mat) %in% sel_cov_names)]
+  
+  pred_mat &lt;- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x &lt;- 0})[1:nrow(pred_mat),])
+  
+  pred_mat &lt;- pred_mat[,colnames(pred_mat)[match(colnames(mod_mat),colnames(pred_mat))]]
+
   A &lt;- matrix(predict(m,pred_mat,type=&quot;response&quot;))
   
   colnames(A) &lt;- &quot;P&quot;
   
   G_s &lt;- dim(A)[1]
+  
   for(i in 1:(dim(A)[1]-1)){
-    if( i == 1){
+    if(i == 1){
       
       a &lt;- abs(as.numeric(unlist(A[1])-unlist(A[-1])))
       #names(a) &lt;- paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;)
@@ -1692,51 +1614,68 @@ if(class(m)[1] == &quot;cv.glmnet&quot;)
       A &lt;- A[-1]
     }
   }
-  1-sum(a)*2/((G_s-1)*G_s) 
 }else{
   a &lt;- 0
   G_s &lt;- 2
 }}
+
 #R-indicator
-if(class(m)[1] == &quot;glm&quot;){
+if(mod == &quot;glm&quot;){
+  predict(m,data.frame(df[,c(&quot;COV&quot;)]),type=&quot;response&quot;)
+  
   df_R &lt;- cbind(df,P=predict(m,data.frame(df[,c(&quot;COV&quot;)]),type=&quot;response&quot;))
   beta &lt;- m$coefficients
-  mod_mat &lt;- model.matrix(m)
   lin_pred &lt;- (model.matrix(m)) %*% beta
+  S_2 &lt;- (sum(((df_R$P - mean(df_R$Response))^2))/n)
 }
 
-if(class(m)[1] == &quot;cv.glmnet&quot;){ 
-  df_R &lt;- cbind(df,P=predict(m,as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),type=&quot;response&quot;,s=m$lambda.min))
+if(mod == &quot;cv.glmnet&quot;){
+  
+  
+  df_R &lt;- cbind(df,P=predict(m,mod_mat,type=&quot;response&quot;))
+  
   colnames(df_R)[ncol(df_R)] &lt;- &quot;P&quot;
-  beta &lt;- coef(m,s=m$lambda.min)
-  mod_mat &lt;- as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)])
+  beta &lt;- coef(m)
+  x &lt;- mod_mat
   beta &lt;- beta[,1][-c(which(names(beta[,1]) == &quot;(Intercept)&quot;))]
+  
+  
+  S_2 &lt;- ifelse(length(sel_cov)&gt;1,(sum(((df_R$P - mean(df_R$Response))^2))/n),1)
 }
 
-denom &lt;- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
 
-S_2 &lt;- (sum(((df_R$P - mean(df_R$Response))^2))/n)
 
-knitr::kable(data.frame(Model=paste(mod),
-  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
-  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
-  R_hat=round(1-2*sqrt(S_2),3)), caption=&quot;p=0.5&quot;,format=&quot;markdown&quot;)</code></pre>
+#denom &lt;- solve(sum(apply(x,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
+
+
+
+
+data.frame(n=n,
+  Model=paste(mod),
+  V_d=1-sum(a)*2/((G_s-1)*G_s),
+  R_hat=ifelse(S_2==1,1,1-2*sqrt(S_2)))</code></pre>
+<pre><code>##      n     Model V_d R_hat
+## 1 1000 cv.glmnet   1     1</code></pre>
+<pre class="r"><code>knitr::kable(data.frame(n=n,
+  Model=paste(mod),
+  V_d=1-sum(a)*2/((G_s-1)*G_s),
+  R_hat=ifelse(S_2==1,1,1-2*sqrt(S_2))), caption=&quot;p=0.5&quot;,format=&quot;markdown&quot;)</code></pre>
 <table>
 <caption>p=0.5</caption>
 <thead>
 <tr class="header">
+<th align="right">n</th>
 <th align="left">Model</th>
 <th align="right">V_d</th>
-<th align="right">R_tilde</th>
 <th align="right">R_hat</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td align="right">1000</td>
 <td align="left">cv.glmnet</td>
 <td align="right">1</td>
-<td align="right">0.956</td>
-<td align="right">0.952</td>
+<td align="right">1</td>
 </tr>
 </tbody>
 </table>
@@ -1748,6 +1687,7 @@ probabilities and also which model to use (GLM or Lasso)</strong>.
 Creating a function from the above code lets us examine the
 representativity measures when changing the tuning parameters.</p>
 <pre class="r"><code>representativity_simulation &lt;- function(n,mod,p){
+
 men &lt;- matrix(NA,nrow=6,ncol=6)
 men[1,] &lt;- c(&quot;&quot;,&quot;Education&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;)
 men[,1] &lt;- c(&quot;&quot;,&quot;Heart Disease&quot;,&quot;HF&quot;,&quot;IHD&quot;,&quot;VHD&quot;,&quot;AF&quot;)
@@ -1937,8 +1877,8 @@ df[(ind[39]+1):ind[40],c(&quot;Female&quot;,&quot;AF&quot;,&quot;Unknown educati
 
 
 df$Response &lt;- 0
-
-#p &lt;- c(rep(0.9,20),rep(0.5,20))
+# 
+# p &lt;- c(rep(0.5,20),rep(0.5,20))
 df[1:ind[1],&quot;Response&quot;] &lt;- rbinom(ind[1],1,p[1]) #1
 df[(ind[1]+1):ind[2],&quot;Response&quot;] &lt;- rbinom(ind[2]-ind[1],1,p[2]) #2
 df[(ind[2]+1):ind[3],&quot;Response&quot;] &lt;- rbinom(ind[3]-ind[2],1,p[3]) #3
@@ -2040,22 +1980,44 @@ df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Secondary educa
 df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Tertiary education&quot;) ,collapse=&quot;_&quot;)
 df$COV[which(apply(df[,c(&quot;Female&quot;,&quot;AF&quot;,&quot;Unknown education&quot;)],1,FUN=function(x){x[1]*x[2]*x[3]}) == 1)] &lt;- paste(c(&quot;Female&quot;,&quot;AF&quot;,&quot;Unknown education&quot;),collapse=&quot;_&quot;)
 
+#rm(df_sim)
 
+
+
+#Find which penalty is chosen in the case of an intercept only model, and use this penalty in the model fitting
 if(mod == &quot;glm&quot;){m &lt;- glm(Response~COV,data=df,family=&quot;binomial&quot;)}
-if(mod == &quot;cv.glmnet&quot;){m &lt;- cv.glmnet(y=df$Response,x=as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;)}
+if(mod == &quot;cv.glmnet&quot;){
+  
+  lambda &lt;- NA
+  df_sim &lt;- copy(df)
+  for(i in 1:9){
+    
+    df_sim &lt;- df_sim[,Response := rbinom(n=dim(df_sim)[1],size=1,prob=mean(df$Response))]
+    m_sim &lt;- glmnet(y=df_sim$Response,x=as.matrix(dummy_cols(df_sim[,c(&quot;COV&quot;)])[,-1]),family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;)
+    lambda[i] &lt;- m_sim$lambda[max(which(m_sim$df == 0))]
+    
+  }
+  mod_mat &lt;- as.matrix(dummy_cols(df[,c(&quot;COV&quot;)])[,-1])
+  m &lt;- glmnet(y=df$Response,x=mod_mat,family=&quot;binomial&quot;,intercept=FALSE,type.measure = &quot;deviance&quot;,lambda=mean(lambda))
+  }
+
+
 
 
 if(mod == &quot;cv.glmnet&quot;){
-  sel_cov &lt;- coef(m,s=m$lambda.1se)
+  sel_cov &lt;- coef(m)
   sel_cov &lt;- sel_cov[,1][-c(which(names(sel_cov[,1]) == &quot;(Intercept)&quot;))]
   sel_cov &lt;- sel_cov[sel_cov!= 0]
   sel_cov_names &lt;- names(sel_cov)
 }
 
-if(class(m)[1] == &quot;glm&quot;){pred_mat &lt;- data.frame(distinct(df[,c(&quot;COV&quot;)]))}
+if(mod== &quot;glm&quot;){pred_mat &lt;- data.frame(distinct(df[,c(&quot;COV&quot;)]))}
+
+#This part fails in case of one covariate
+
 
 #Total variation distance
-if(class(m)[1] == &quot;glm&quot;){
+if(mod == &quot;glm&quot;){
   
   A &lt;- matrix(predict(m,pred_mat,type=&quot;response&quot;))
   
@@ -2077,24 +2039,33 @@ if(class(m)[1] == &quot;glm&quot;){
   }
   1-sum(a)*2/((G_s-1)*G_s) 
 }
-if(class(m)[1] == &quot;cv.glmnet&quot;)
+
+if(mod == &quot;cv.glmnet&quot;)
 {
-  if(length(sel_cov)&gt;0){
-  pred_mat &lt;- distinct(df[,..sel_cov_names])
-  temp_df &lt;- copy(distinct(df[,-..sel_cov_names][,-c(&quot;COV&quot;,&quot;Response&quot;)]))
-  pred_mat &lt;- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x &lt;- 0})[1:nrow(pred_mat),])
-  pred_mat
-  col_ind_pred_mat &lt;- match(colnames(distinct(df[,-c(&quot;COV&quot;,&quot;Response&quot;)])), colnames(pred_mat))
-  pred_mat &lt;- as.matrix(pred_mat[,..col_ind_pred_mat])
+  #if(length(sel_cov) == 1)
+  # temp_pred_mat &lt;- c(pred_mat,apply(temp_df,c(1,2),function(x){x &lt;- 0})[1,])
+  # names(temp_pred_mat)[1] &lt;- row.names(pred_mat)
+  # pred_mat &lt;- temp_pred_mat
+  # pred_mat &lt;- pred_mat[names(pred_mat)[match(colnames(mod_mat),names(pred_mat))]]
   
-  #A &lt;- data.frame(COV=distinct(df[,-c(&quot;Response&quot;)])[,&quot;COV&quot;],P=predict(m,pred_mat,type=&quot;response&quot;))
+  if(length(sel_cov)&gt;1){
+  pred_mat &lt;- as.matrix(mod_mat[1:length(sel_cov_names),sel_cov_names])
+  
+  diag(pred_mat) &lt;- 1
+  temp_df &lt;- mod_mat[,-which(colnames(mod_mat) %in% sel_cov_names)]
+  
+  pred_mat &lt;- cbind(pred_mat,apply(temp_df,c(1,2),function(x){x &lt;- 0})[1:nrow(pred_mat),])
+  
+  pred_mat &lt;- pred_mat[,colnames(pred_mat)[match(colnames(mod_mat),colnames(pred_mat))]]
+
   A &lt;- matrix(predict(m,pred_mat,type=&quot;response&quot;))
   
   colnames(A) &lt;- &quot;P&quot;
   
   G_s &lt;- dim(A)[1]
+  
   for(i in 1:(dim(A)[1]-1)){
-    if( i == 1){
+    if(i == 1){
       
       a &lt;- abs(as.numeric(unlist(A[1])-unlist(A[-1])))
       #names(a) &lt;- paste(unlist(A[1,1]),unlist(A[-1,1]),sep=&quot;+&quot;)
@@ -2106,38 +2077,46 @@ if(class(m)[1] == &quot;cv.glmnet&quot;)
       A &lt;- A[-1]
     }
   }
-  1-sum(a)*2/((G_s-1)*G_s) 
 }else{
   a &lt;- 0
   G_s &lt;- 2
 }}
 
 #R-indicator
-if(class(m)[1] == &quot;glm&quot;){
+if(mod == &quot;glm&quot;){
+  predict(m,data.frame(df[,c(&quot;COV&quot;)]),type=&quot;response&quot;)
+  
   df_R &lt;- cbind(df,P=predict(m,data.frame(df[,c(&quot;COV&quot;)]),type=&quot;response&quot;))
   beta &lt;- m$coefficients
-  mod_mat &lt;- model.matrix(m)
   lin_pred &lt;- (model.matrix(m)) %*% beta
+  S_2 &lt;- (sum(((df_R$P - mean(df_R$Response))^2))/n)
 }
 
-if(class(m)[1] == &quot;cv.glmnet&quot;){ 
-  df_R &lt;- cbind(df,P=predict(m,as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)]),type=&quot;response&quot;,s=m$lambda.min))
+if(mod == &quot;cv.glmnet&quot;){
+  
+  
+  df_R &lt;- cbind(df,P=predict(m,mod_mat,type=&quot;response&quot;))
+  
   colnames(df_R)[ncol(df_R)] &lt;- &quot;P&quot;
-  beta &lt;- coef(m,s=m$lambda.min)
-  mod_mat &lt;- as.matrix(df[,-c(&quot;COV&quot;,&quot;Response&quot;)])
+  beta &lt;- coef(m)
+  x &lt;- mod_mat
   beta &lt;- beta[,1][-c(which(names(beta[,1]) == &quot;(Intercept)&quot;))]
-  }
+  
+  
+  S_2 &lt;- ifelse(length(sel_cov)&gt;1,(sum(((df_R$P - mean(df_R$Response))^2))/n),1)
+}
 
-denom &lt;- solve(sum(apply(mod_mat,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
 
-S_2 &lt;- (sum(((df_R$P - mean(df_R$Response))^2))/n)
+
+#denom &lt;- solve(sum(apply(x,1,FUN=function(x){as.numeric(exp(x %*% beta)/((1+exp(x %*% beta))^2))*( (x) %*% t(x))})))
+
+
+
+
 data.frame(n=n,
   Model=paste(mod),
-  V_d=round(1-sum(a)*2/((G_s-1)*G_s),3),
-  R_tilde=round(1-2*sqrt(S_2-sum(apply(mod_mat,1,FUN=function(x){((exp(x %*% beta)/((1+exp(x %*% beta))^2))^2 %*% t(x)) %*% (as.numeric(denom)* matrix(x))}))/n),3),
-  R_hat=round(1-2*sqrt(S_2),3))
-
-
+  V_d=1-sum(a)*2/((G_s-1)*G_s),
+  R_hat=ifelse(S_2==1,1,1-2*sqrt(S_2)))
 }</code></pre>
 <p>Changing only the sample size leads to</p>
 <pre class="r"><code>knitr::kable(rbind(
@@ -2152,7 +2131,6 @@ representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=rep(0.5,40))),cap
 <th align="right">n</th>
 <th align="left">Model</th>
 <th align="right">V_d</th>
-<th align="right">R_tilde</th>
 <th align="right">R_hat</th>
 </tr>
 </thead>
@@ -2160,30 +2138,26 @@ representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=rep(0.5,40))),cap
 <tr class="odd">
 <td align="right">1000</td>
 <td align="left">glm</td>
-<td align="right">0.771</td>
-<td align="right">0.818</td>
-<td align="right">0.817</td>
+<td align="right">0.7973078</td>
+<td align="right">0.8325144</td>
 </tr>
 <tr class="even">
 <td align="right">1000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">1.000</td>
-<td align="right">0.977</td>
-<td align="right">0.970</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
 </tr>
 <tr class="odd">
 <td align="right">5000</td>
 <td align="left">glm</td>
-<td align="right">0.910</td>
-<td align="right">0.912</td>
-<td align="right">0.911</td>
+<td align="right">0.9267299</td>
+<td align="right">0.9353124</td>
 </tr>
 <tr class="even">
 <td align="right">5000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">1.000</td>
-<td align="right">0.993</td>
-<td align="right">0.989</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
 </tr>
 </tbody>
 </table>
@@ -2202,7 +2176,6 @@ representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=rep(0.25,40))),ca
 <th align="right">n</th>
 <th align="left">Model</th>
 <th align="right">V_d</th>
-<th align="right">R_tilde</th>
 <th align="right">R_hat</th>
 </tr>
 </thead>
@@ -2210,30 +2183,26 @@ representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=rep(0.25,40))),ca
 <tr class="odd">
 <td align="right">1000</td>
 <td align="left">glm</td>
-<td align="right">0.794</td>
-<td align="right">0.854</td>
-<td align="right">0.853</td>
+<td align="right">0.8061683</td>
+<td align="right">0.8221056</td>
 </tr>
 <tr class="even">
 <td align="right">1000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">0.898</td>
-<td align="right">0.923</td>
-<td align="right">0.922</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
 </tr>
 <tr class="odd">
 <td align="right">5000</td>
 <td align="left">glm</td>
-<td align="right">0.912</td>
-<td align="right">0.916</td>
-<td align="right">0.915</td>
+<td align="right">0.9194158</td>
+<td align="right">0.9219624</td>
 </tr>
 <tr class="even">
 <td align="right">5000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">0.964</td>
-<td align="right">0.978</td>
-<td align="right">0.977</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
 </tr>
 </tbody>
 </table>
@@ -2249,7 +2218,6 @@ representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=rep(0.8,40))),cap
 <th align="right">n</th>
 <th align="left">Model</th>
 <th align="right">V_d</th>
-<th align="right">R_tilde</th>
 <th align="right">R_hat</th>
 </tr>
 </thead>
@@ -2257,30 +2225,26 @@ representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=rep(0.8,40))),cap
 <tr class="odd">
 <td align="right">1000</td>
 <td align="left">glm</td>
-<td align="right">0.838</td>
-<td align="right">0.825</td>
-<td align="right">0.824</td>
+<td align="right">0.7897049</td>
+<td align="right">0.8232487</td>
 </tr>
 <tr class="even">
 <td align="right">1000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">0.932</td>
-<td align="right">0.958</td>
-<td align="right">0.955</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
 </tr>
 <tr class="odd">
 <td align="right">5000</td>
 <td align="left">glm</td>
-<td align="right">0.906</td>
-<td align="right">0.922</td>
-<td align="right">0.922</td>
+<td align="right">0.9237250</td>
+<td align="right">0.9355783</td>
 </tr>
 <tr class="even">
 <td align="right">5000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">0.977</td>
-<td align="right">0.984</td>
-<td align="right">0.983</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
 </tr>
 </tbody>
 </table>
@@ -2304,7 +2268,6 @@ representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=c(rep(0.3,20),rep
 <th align="right">n</th>
 <th align="left">Model</th>
 <th align="right">V_d</th>
-<th align="right">R_tilde</th>
 <th align="right">R_hat</th>
 </tr>
 </thead>
@@ -2312,30 +2275,26 @@ representativity_simulation(n=5000,mod=&quot;cv.glmnet&quot;,p=c(rep(0.3,20),rep
 <tr class="odd">
 <td align="right">1000</td>
 <td align="left">glm</td>
-<td align="right">0.642</td>
-<td align="right">0.490</td>
-<td align="right">0.490</td>
+<td align="right">0.6607676</td>
+<td align="right">0.5072613</td>
 </tr>
 <tr class="even">
 <td align="right">1000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">0.681</td>
-<td align="right">0.536</td>
-<td align="right">0.536</td>
+<td align="right">0.8965139</td>
+<td align="right">0.8185450</td>
 </tr>
 <tr class="odd">
 <td align="right">5000</td>
 <td align="left">glm</td>
-<td align="right">0.706</td>
-<td align="right">0.533</td>
-<td align="right">0.533</td>
+<td align="right">0.7081015</td>
+<td align="right">0.5341932</td>
 </tr>
 <tr class="even">
 <td align="right">5000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">0.600</td>
-<td align="right">0.546</td>
-<td align="right">0.546</td>
+<td align="right">0.8640168</td>
+<td align="right">0.7239532</td>
 </tr>
 </tbody>
 </table>
@@ -2366,7 +2325,6 @@ p(female,(HF,AF))=0.45, p(female,(IHD,VHD))=0.85,</caption>
 <th align="right">n</th>
 <th align="left">Model</th>
 <th align="right">V_d</th>
-<th align="right">R_tilde</th>
 <th align="right">R_hat</th>
 </tr>
 </thead>
@@ -2374,30 +2332,26 @@ p(female,(HF,AF))=0.45, p(female,(IHD,VHD))=0.85,</caption>
 <tr class="odd">
 <td align="right">1000</td>
 <td align="left">glm</td>
-<td align="right">0.686</td>
-<td align="right">0.547</td>
-<td align="right">0.547</td>
+<td align="right">0.6761122</td>
+<td align="right">0.5379248</td>
 </tr>
 <tr class="even">
 <td align="right">1000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">0.823</td>
-<td align="right">0.597</td>
-<td align="right">0.597</td>
+<td align="right">0.8860718</td>
+<td align="right">0.8183840</td>
 </tr>
 <tr class="odd">
 <td align="right">10000</td>
 <td align="left">glm</td>
-<td align="right">0.749</td>
-<td align="right">0.588</td>
-<td align="right">0.588</td>
+<td align="right">0.7361573</td>
+<td align="right">0.5659480</td>
 </tr>
 <tr class="even">
 <td align="right">10000</td>
 <td align="left">cv.glmnet</td>
-<td align="right">0.778</td>
-<td align="right">0.573</td>
-<td align="right">0.573</td>
+<td align="right">0.8365002</td>
+<td align="right">0.7202922</td>
 </tr>
 </tbody>
 </table>
