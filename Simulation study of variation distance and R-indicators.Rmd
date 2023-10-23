@@ -1241,6 +1241,7 @@ representativity_simulation(n=1000,mod="glm",p=p),
 representativity_simulation(n=1000,mod="cv.glmnet",p=p),
 representativity_simulation(n=10000,mod="glm",p=p),
 representativity_simulation(n=10000,mod="cv.glmnet",p=p)),caption="p(male,(HF,AF))=0.3, p(male,(IHD,VHD))=0.7, p(female,(HF,AF))=0.45, p(female,(IHD,VHD))=0.85,",format="markdown")
+
 ```
 
 
